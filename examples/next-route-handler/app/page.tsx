@@ -1,7 +1,7 @@
 'use client';
 
-import { OpenLoopProvider } from '@alecbot/open-loop-ui';
-import type { OpenLoopAdapterPayload } from '@alecbot/open-loop-ui';
+import { OpenLoopProvider } from '@heyitsalec/open-loop-ui';
+import type { OpenLoopAdapterPayload } from '@heyitsalec/open-loop-ui';
 
 async function sendToRoute(payload: OpenLoopAdapterPayload) {
   const response = await fetch('/api/open-loop', {

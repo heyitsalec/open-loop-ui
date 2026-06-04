@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import '@alecbot/open-loop-ui/styles.css';
+import '@heyitsalec/open-loop-ui/styles.css';
 import { App } from './App';
 import './styles.css';
 

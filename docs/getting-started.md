@@ -3,8 +3,8 @@
 Open Loop UI is a React 18/19 package plus a small adapter boundary. Drop it into the app, label a few interesting regions, and suddenly the UI can point at itself.
 
 ```tsx
-import { OpenLoopProvider } from '@alecbot/open-loop-ui';
-import '@alecbot/open-loop-ui/styles.css';
+import { OpenLoopProvider } from '@heyitsalec/open-loop-ui';
+import '@heyitsalec/open-loop-ui/styles.css';
 
 export function App() {
   return (
@@ -49,7 +49,7 @@ The default shortcut is `Cmd+.` on macOS and `Ctrl+.` elsewhere.
 For static demos and tests, use the mock adapter:
 
 ```ts
-import { createMockAdapter } from '@alecbot/open-loop-ui/adapters/mock';
+import { createMockAdapter } from '@heyitsalec/open-loop-ui/adapters/mock';
 ```
 
 For server-backed apps, keep browser code simple and call your own route:
