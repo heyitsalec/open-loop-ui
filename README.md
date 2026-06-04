@@ -1,6 +1,9 @@
 # Open Loop UI
 
-![Open Loop UI hero screenshot](docs/assets/open-loop-hero.png)
+[![npm version](https://img.shields.io/npm/v/%40alecbot%2Fopen-loop-ui.svg)](https://www.npmjs.com/package/@alecbot/open-loop-ui)
+[![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+![Open Loop UI hero screenshot](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-hero.png)
 
 A drop-in floating design feedback loop for React apps. Tiny button, big opinions.
 
@@ -11,6 +14,8 @@ It is meant to sit inside almost any application: dashboards, mobile shells, int
 ```bash
 npm install @alecbot/open-loop-ui
 ```
+
+Works with React 18 and 19. The static demo ships with the repo and can be built with `npm run build:demo`.
 
 ```tsx
 import { OpenLoopProvider } from '@alecbot/open-loop-ui';
@@ -46,6 +51,16 @@ export function App() {
 - Playwright captures the proof states, so a PR can show the actual recorded UI image right in the review/chat thread instead of asking people to imagine it.
 - The package never writes files or calls a provider directly. It collects intent and sends JSON to your adapter.
 
+## Supported Targets
+
+Add `data-open-loop-label="Revenue chart"` to any region you want the picker to name clearly. Optional attributes:
+
+- `data-open-loop-id` creates a stable selector.
+- `data-open-loop-node-id` adds an internal node id to the payload.
+- `data-open-loop-ignore="true"` keeps app chrome or overlays out of targeting.
+
+If no label is present, Open Loop falls back to nearby ids, class names, or tag names.
+
 ## The Fun Bit
 
 Open the pill, click a real element, and Open Loop records the label, selector, target rectangle, draft, classification, and app metadata. That payload can become an issue tracker item, a local agent task, a design review note, a PR comment, or whatever your team uses to keep work moving.
@@ -62,29 +77,29 @@ The demo captures README-ready Playwright assets from sanitized app scenes:
 
 The screenshots and video are generated from real interaction states, not mocked pixels. That is the whole trick: the component can prove its own UX in review.
 
-<video src="docs/assets/open-loop-demo.webm" controls muted playsinline></video>
+<video src="https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-demo.webm" controls muted playsinline></video>
 
 ## Screenshots
 
 | Hero flow | Floating pill |
 |---|---|
-| ![Open Loop UI hero flow](docs/assets/open-loop-hero.png) | ![Floating Improve UI pill](docs/assets/open-loop-pill.png) |
+| ![Open Loop UI hero flow](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-hero.png) | ![Floating Improve UI pill](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-pill.png) |
 
 | DOM selection | Live panel |
 |---|---|
-| ![Open Loop DOM selection with cursor](docs/assets/open-loop-dom-selection.png) | ![Open Loop panel](docs/assets/open-loop-panel.png) |
+| ![Open Loop DOM selection with cursor](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-dom-selection.png) | ![Open Loop panel](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-panel.png) |
 
 | Message handoff | PR proof |
 |---|---|
-| ![Open Loop message handoff](docs/assets/open-loop-message-flow.png) | ![Open Loop PR proof](docs/assets/open-loop-pr-proof.png) |
+| ![Open Loop message handoff](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-message-flow.png) | ![Open Loop PR proof](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-pr-proof.png) |
 
 | Adapter handoff | Targeting crop |
 |---|---|
-| ![Open Loop handoff](docs/assets/open-loop-handoff.png) | ![Open Loop element targeting](docs/assets/open-loop-targeting.png) |
+| ![Open Loop handoff](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-handoff.png) | ![Open Loop element targeting](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-targeting.png) |
 
 ## CLI Adapter Contract
 
-The CLI adapter is model-agnostic. It runs your command, writes one JSON payload to stdin, and expects one JSON object on stdout.
+The adapter payload and result are the stable 0.1 contract. The CLI adapter is model-agnostic: it runs your command, writes one JSON payload to stdin, and expects one JSON object on stdout.
 
 Use it from a Node-capable boundary such as a local server, Electron main process, devtool backend, or script:
 
@@ -140,11 +155,21 @@ npm run lint
 npm run typecheck
 npm test
 npm run build
-npm run test:e2e
-npm run capture
+npm run test:e2e:smoke
 ```
 
-`npm run test:e2e` refreshes the README screenshots and WebM under `docs/assets/`. `npm run capture` runs only the capture spec; set `OPEN_LOOP_CAPTURE_GIF=1` to also write an optional GIF when `ffmpeg` is installed.
+`npm run test:e2e:smoke` avoids rewriting tracked screenshots. Use `npm run test:e2e` when you intentionally want the full browser suite, including asset refresh. Use `npm run capture` when you only want to refresh the README screenshots and WebM under `docs/assets/`; set `OPEN_LOOP_CAPTURE_GIF=1` to also write an optional GIF when `ffmpeg` is installed.
+
+Build the static demo with:
+
+```bash
+npm run build:demo
+```
+
+## Examples
+
+- [Vite basic](examples/vite-basic)
+- [Next.js route handler](examples/next-route-handler)
 
 ## Docs
 
@@ -156,3 +181,4 @@ npm run capture
 - [Implementation learnings](docs/implementation-learnings.md)
 - [Public release checklist](docs/public-release-checklist.md)
 - [Community growth playbook](docs/community-growth-playbook.md)
+- [Starter issues](docs/starter-issues.md)

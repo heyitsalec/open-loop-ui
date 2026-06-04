@@ -102,4 +102,25 @@ describe('target discovery', () => {
     expect(target.selector).toBe('[data-open-loop-label="Revenue chart"]');
     expect(target.rect).toEqual({ x: 12, y: 20, width: 320, height: 180 });
   });
+
+  it('builds selectors that survive punctuation, quotes, and leading digits', () => {
+    const labelled = document.createElement('section');
+    labelled.dataset.openLoopLabel = 'Revenue chart "Q1"\n[beta]';
+    document.body.appendChild(labelled);
+
+    const target = describeOpenLoopTarget(labelled);
+    expect(target.selector).not.toBeNull();
+    expect(document.querySelector(target.selector!)).toBe(labelled);
+
+    const identified = document.createElement('div');
+    identified.id = '123 weird:id';
+    document.body.appendChild(identified);
+
+    const identifiedTarget = describeOpenLoopTarget(identified);
+    expect(identifiedTarget.selector).not.toBeNull();
+    expect(document.querySelector(identifiedTarget.selector!)).toBe(identified);
+
+    labelled.remove();
+    identified.remove();
+  });
 });

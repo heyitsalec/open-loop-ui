@@ -24,12 +24,17 @@ Slightly warmer version:
 
 - Confirm the README opens with the strongest screenshot or GIF.
 - Confirm the hero, DOM selection, message handoff, PR proof, and WebM assets were regenerated from Playwright.
+- Confirm CI is green for React 18 and React 19.
+- Confirm `npm run test:consumer` installs and builds the packed package in a throwaway app.
+- Confirm `npm pack --dry-run` does not include `docs/assets`.
+- Confirm `npm run build:demo` produces the static GitHub Pages demo.
+- Confirm the Vite and Next.js examples install cleanly after the package is published.
 - Add a portfolio project page with the screenshots and one short demo clip.
 - Add a work marketplace portfolio entry with the same screenshot set.
 - Prepare one short post with the "tiny button, real DOM target" hook.
 - Record `docs/assets/open-loop-demo.webm` or `docs/assets/open-loop-demo.gif`.
 - For launch PRs or release notes, attach the Playwright screenshots directly in the review/chat summary.
-- Remove `"private": true` only when publishing to npm.
+- Verify `package.json` has repository, homepage, bugs, author, and public publish metadata.
 - Use the [Community Growth Playbook](community-growth-playbook.md) as the reusable launch checklist for this and the next couple of OSS projects.
 
 ## Proof Assets

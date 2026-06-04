@@ -11,8 +11,8 @@ This is the low-drama plan for earning attention without pretending the internet
 - **Make the repo description concrete.** Suggested: `A floating design feedback loop for React apps: click a DOM element, describe the fix, hand JSON to your agent or CLI.`
 - **Add a social preview image.** Use `docs/assets/open-loop-hero.png` or a cropped composite of targeting + panel.
 - **Ship one "copy-paste in 60 seconds" example.** The README already has the provider snippet; keep it near the top.
-- **Add a tiny examples folder later.** `examples/vite-basic` and `examples/next-route-handler` would make the project feel immediately usable.
-- **Open 3-5 starter issues.** Good first issues make the repo feel alive: Next.js example, demo video, theme preset, adapter examples, docs polish.
+- **Keep examples tiny.** `examples/vite-basic` and `examples/next-route-handler` should stay copy-paste friendly.
+- **Open 3-5 starter issues.** Use `docs/starter-issues.md` so the repo feels alive without inventing work on launch day.
 
 ## Launch Sequence
 

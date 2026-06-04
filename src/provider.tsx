@@ -138,6 +138,16 @@ export function OpenLoopProvider({
   }, [shortcut]);
 
   useEffect(() => {
+    if (!open || pointing) return undefined;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      closePanel();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [closePanel, open, pointing]);
+
+  useEffect(() => {
     if (!pointing) return undefined;
 
     let last: Element | null = null;
@@ -271,10 +281,12 @@ export function OpenLoopProvider({
 
   return (
     <OpenLoopContext.Provider value={value}>
-      <div className={['olu-theme', className].filter(Boolean).join(' ')} data-open-loop-root>
-        {children}
-      </div>
-      {renderChrome && <OpenLoopChrome />}
+      {children}
+      {renderChrome && (
+        <div className={['olu-theme', className].filter(Boolean).join(' ')} data-open-loop-root>
+          <OpenLoopChrome />
+        </div>
+      )}
     </OpenLoopContext.Provider>
   );
 }

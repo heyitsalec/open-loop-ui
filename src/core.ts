@@ -208,9 +208,69 @@ function selectorForElement(element: HTMLElement): string | null {
 
 function safeCssEscape(value: string): string {
   if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') return CSS.escape(value);
-  return value.replace(/[^a-zA-Z0-9_-]/g, (char) => `\\${char}`);
+  return escapeCssIdentifier(value);
 }
 
 function escapeAttribute(value: string): string {
-  return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  let result = '';
+  for (let index = 0; index < value.length; index += 1) {
+    const char = value.charAt(index);
+    const code = char.charCodeAt(0);
+    if (code > 0x001f && code !== 0x007f && char !== '"' && char !== '\\') {
+      result += char;
+      continue;
+    }
+    if (char === '"') {
+      result += '\\"';
+      continue;
+    }
+    if (char === '\\') {
+      result += '\\\\';
+      continue;
+    }
+    if (code === 0) {
+      result += '\\FFFD ';
+      continue;
+    }
+    result += `\\${code.toString(16)} `;
+  }
+  return result;
+}
+
+function escapeCssIdentifier(value: string): string {
+  let result = '';
+  for (let index = 0; index < value.length; index += 1) {
+    const char = value.charAt(index);
+    const code = char.charCodeAt(0);
+    if (code === 0x0000) {
+      result += '\uFFFD';
+      continue;
+    }
+    if (
+      code <= 0x001f ||
+      code === 0x007f ||
+      (index === 0 && code >= 0x0030 && code <= 0x0039) ||
+      (index === 1 && code >= 0x0030 && code <= 0x0039 && value.charCodeAt(0) === 0x002d)
+    ) {
+      result += `\\${code.toString(16)} `;
+      continue;
+    }
+    if (index === 0 && code === 0x002d && value.length === 1) {
+      result += '\\-';
+      continue;
+    }
+    if (
+      code >= 0x0080 ||
+      code === 0x002d ||
+      code === 0x005f ||
+      (code >= 0x0030 && code <= 0x0039) ||
+      (code >= 0x0041 && code <= 0x005a) ||
+      (code >= 0x0061 && code <= 0x007a)
+    ) {
+      result += char;
+      continue;
+    }
+    result += `\\${char}`;
+  }
+  return result;
 }
