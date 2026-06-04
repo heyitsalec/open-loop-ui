@@ -18,7 +18,7 @@ function run(command, args, cwd = root) {
 }
 
 try {
-  const packOutput = run('npm', ['pack', '--json']);
+  const packOutput = run('npm', ['pack', '--json', '--ignore-scripts']);
   const [packInfo] = JSON.parse(packOutput);
   packedPath = resolve(root, packInfo.filename);
 

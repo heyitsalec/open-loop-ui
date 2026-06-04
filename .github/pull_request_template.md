@@ -9,6 +9,7 @@ Describe what changed and why.
 - [ ] `npm test`
 - [ ] `npm run build`
 - [ ] `npm run test:e2e:smoke`
+- [ ] `npm run release:check` for launch/release changes
 
 ## Visuals
 

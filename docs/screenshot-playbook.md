@@ -31,8 +31,9 @@ The capture flow writes:
 - `docs/assets/open-loop-message-flow.png`
 - `docs/assets/open-loop-pr-proof.png`
 - `docs/assets/open-loop-demo.webm`
+- `docs/assets/open-loop-demo.gif`
 
-`npm run capture` runs only the capture spec. Set `OPEN_LOOP_CAPTURE_GIF=1` to write `docs/assets/open-loop-demo.gif` too, but keep WebM as the primary video artifact.
+`npm run capture` runs only the capture spec. When `ffmpeg` is installed, it also writes `docs/assets/open-loop-demo.gif` for the README hero. Set `OPEN_LOOP_CAPTURE_GIF=0` to keep WebM only.
 
 Before publishing, inspect the images and keep only states that communicate the value quickly:
 
@@ -44,7 +45,7 @@ Before publishing, inspect the images and keep only states that communicate the 
 - The handoff screenshot should show the JSON contract or submitted local item.
 - The message handoff screenshot can be mocked, but it should use real provider state for the anchor text/item where possible.
 - The PR proof screenshot should show a preview image and an approve action without naming private services.
-- The WebM should show pill -> panel -> target -> submit -> toast without long dead air.
+- The GIF/WebM should stay around 6-9 seconds and show pill -> panel -> target -> message -> PR proof without long dead air.
 
 ## PR / Chat Proof
 
@@ -62,7 +63,7 @@ The demo video captures the same flow:
 1. Pill appears on a normal app screen.
 2. User opens the panel.
 3. User points at a DOM element.
-4. User submits.
-5. Adapter JSON and local feed update.
+4. User submits an anchored request.
+5. The mocked handoff shows message sent, then PR proof with preview WebM and approval.
 
 Keep the still screenshots anyway; they render faster in README and make PR review friendlier.

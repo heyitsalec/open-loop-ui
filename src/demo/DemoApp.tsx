@@ -24,12 +24,12 @@ import {
   Wand2
 } from 'lucide-react';
 import type { CSSProperties, ReactElement, ReactNode } from 'react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useOpenLoop } from '../context';
 
 const sceneIds = ['dashboard', 'portfolio', 'operator', 'mobile'] as const;
 type DemoSceneId = (typeof sceneIds)[number];
-type ProofMode = 'off' | 'message' | 'pr';
+type ProofMode = 'off' | 'message' | 'pr' | 'sequence';
 
 type SceneConfig = {
   id: DemoSceneId;
@@ -74,7 +74,7 @@ const scenes: Record<DemoSceneId, SceneConfig> = {
     id: 'operator',
     label: 'Operator console',
     shortLabel: 'Console',
-    title: 'Dense tools get clearer when feedback has an anchor.',
+    title: 'Dense tools need anchors.',
     subtitle: 'Point at a panel, graph, row, or command and keep the next step precise.',
     hostLabel: 'Operator console surface',
     accent: 'coral',
@@ -415,15 +415,31 @@ function ProofFlowPanel({ mode, scene }: { mode: Exclude<ProofMode, 'off'>; scen
   const loop = useOpenLoop();
   const payload = loop.lastPayload ?? loop.previewPayload;
   const item = loop.items[0];
+  const itemId = item?.id ?? 'LOOP-G0W00';
+  const [sequenceState, setSequenceState] = useState<{ itemId: string; step: 'message' | 'pr' } | null>(null);
+  const sequenceStep = sequenceState?.itemId === itemId ? sequenceState.step : 'thinking';
+  const displayMode = mode === 'sequence' ? sequenceStep : mode;
+  const isWaitingForSequence = mode === 'sequence' && !item;
   const requestText = payload?.text ?? 'Make the review queue easier to scan and give the active item a calmer highlight.';
   const targetLabel = payload?.target?.label ?? 'Review queue panel';
   const selector = payload?.target?.selector ?? '[data-open-loop-label="Review queue panel"]';
-  const itemId = item?.id ?? 'LOOP-G0W00';
   const routeLabel = (payload?.classification.kind ?? 'ui_feedback').replace(/_/g, ' ');
+
+  useEffect(() => {
+    if (mode !== 'sequence') return undefined;
+    if (!item) return undefined;
+    const currentItemId = item.id;
+    const responseHandle = window.setTimeout(() => setSequenceState({ itemId: currentItemId, step: 'message' }), 700);
+    const prHandle = window.setTimeout(() => setSequenceState({ itemId: currentItemId, step: 'pr' }), 1_850);
+    return () => {
+      window.clearTimeout(responseHandle);
+      window.clearTimeout(prHandle);
+    };
+  }, [item, mode]);
 
   return (
     <aside
-      className={`demo-proof-flow proof-${mode}`}
+      className={`demo-proof-flow proof-${displayMode}`}
       data-testid="demo-proof-flow"
       data-open-loop-label="Proof chat rail"
       data-open-loop-id="proof-chat-rail"
@@ -436,67 +452,103 @@ function ProofFlowPanel({ mode, scene }: { mode: Exclude<ProofMode, 'off'>; scen
         <MessageSquareText size={17} />
       </div>
 
-      <div className="proof-thread">
-        <article className="proof-message user">
-          <div className="proof-message-meta">
-            <span>You</span>
-            <small>request sent</small>
-          </div>
-          <p>{requestText}</p>
-          <div className="proof-chip-row">
-            <span>@ {targetLabel}</span>
-            <span>{routeLabel}</span>
-          </div>
-          <code>{selector}</code>
-        </article>
+      {isWaitingForSequence ? (
+        <div className="proof-thread">
+          <article className="proof-message agent proof-waiting" data-testid="demo-proof-waiting">
+            <div className="proof-message-meta">
+              <span>Open Loop Agent</span>
+              <small>waiting</small>
+            </div>
+            <p>Open the Improve UI pill, point at a real region, and the handoff will land here.</p>
+            <div className="proof-status-list">
+              <span><MousePointer2 size={12} /> target needed</span>
+              <span><Send size={12} /> request ready</span>
+            </div>
+          </article>
+        </div>
+      ) : (
+        <div className="proof-thread">
+          <article className="proof-message user">
+            <div className="proof-message-meta">
+              <span>You</span>
+              <small>request sent</small>
+            </div>
+            <p>{requestText}</p>
+            <div className="proof-chip-row">
+              <span>@ {targetLabel}</span>
+              <span>{routeLabel}</span>
+            </div>
+            <code>{selector}</code>
+          </article>
 
-        <article className="proof-message agent">
-          <div className="proof-message-meta">
-            <span>Open Loop Agent</span>
-            <small>{mode === 'message' ? 'working' : 'ready for review'}</small>
-          </div>
-          {mode === 'message' ? (
-            <>
-              <p>Filed <strong>{itemId}</strong>. Branch preview is starting; screenshot proof will land back here when the change is ready.</p>
-              <div className="proof-status-list">
-                <span><Send size={12} /> JSON received</span>
-                <span><GitPullRequest size={12} /> PR pending</span>
-                <span><ImageIcon size={12} /> preview queued</span>
-              </div>
-            </>
-          ) : (
-            <>
-              <p><strong>PR #42 is up.</strong> The preview run attached a rendered image of the changed component.</p>
-              <div className="proof-review-card">
-                <div className="proof-thumb" aria-label="Rendered preview screenshot" role="img">
-                  <div className="proof-thumb-top">
-                    <span />
-                    <span />
-                    <span />
+          <article className="proof-message agent">
+            <div className="proof-message-meta">
+              <span>{displayMode === 'thinking' ? 'Open Loop LLM' : 'Open Loop Agent'}</span>
+              <small>
+                {displayMode === 'thinking' ? 'thinking' : displayMode === 'message' ? 'responded' : 'ready for review'}
+              </small>
+            </div>
+            {displayMode === 'thinking' ? (
+              <>
+                <p><strong>LLM thinking through the anchor.</strong> It has the draft, DOM label, selector, and target rectangle.</p>
+                <div className="proof-thinking-row" aria-label="LLM thinking">
+                  <span />
+                  <span />
+                  <span />
+                </div>
+                <div className="proof-status-list">
+                  <span><MousePointer2 size={12} /> DOM context</span>
+                  <span><Sparkles size={12} /> response drafting</span>
+                </div>
+              </>
+            ) : displayMode === 'message' ? (
+              <>
+                <p>I can turn <strong>{itemId}</strong> into a small UI polish branch. Branch preview is starting from this anchored chat request; image and WebM proof will land back here.</p>
+                <div className="proof-status-list">
+                  <span><Send size={12} /> JSON received</span>
+                  <span><GitPullRequest size={12} /> branch writing</span>
+                  <span><ImageIcon size={12} /> preview queued</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <p><strong>PR #42 is up.</strong> Review the attached image and improvement WebM before approving.</p>
+                <div className="proof-review-card">
+                  <div className="proof-thumb" aria-label="Rendered preview screenshot" role="img">
+                    <div className="proof-thumb-top">
+                      <span />
+                      <span />
+                      <span />
+                    </div>
+                    <div className="proof-thumb-body">
+                      <div className="proof-thumb-sidebar" />
+                      <div className="proof-thumb-main">
+                        <strong>Review queue</strong>
+                        <span className="proof-thumb-row active" />
+                        <span className="proof-thumb-row" />
+                        <span className="proof-thumb-row" />
+                      </div>
+                    </div>
+                    <span className="proof-play" aria-hidden="true" />
                   </div>
-                  <div className="proof-thumb-body">
-                    <div className="proof-thumb-sidebar" />
-                    <div className="proof-thumb-main">
-                      <strong>Review queue</strong>
-                      <span className="proof-thumb-row active" />
-                      <span className="proof-thumb-row" />
-                      <span className="proof-thumb-row" />
+                  <div>
+                    <span className="proof-pr-badge"><GitPullRequest size={12} /> PR #42</span>
+                    <p>Queue card contrast tightened, spacing normalized, hover state softened.</p>
+                    <div className="proof-asset-row">
+                      <span><ImageIcon size={12} /> image proof</span>
+                      <span><MonitorDot size={12} /> improvement WebM</span>
+                    </div>
+                    <div className="proof-actions">
+                      <button type="button"><ThumbsUp size={13} /> Approve</button>
+                      <button type="button" className="secondary">Preview WebM</button>
                     </div>
                   </div>
                 </div>
-                <div>
-                  <span className="proof-pr-badge"><GitPullRequest size={12} /> PR #42</span>
-                  <p>Queue card contrast tightened, spacing normalized, hover state softened.</p>
-                  <div className="proof-actions">
-                    <button type="button"><ThumbsUp size={13} /> Approve</button>
-                    <button type="button" className="secondary">View diff</button>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-        </article>
-      </div>
+              </>
+            )}
+          </article>
+        </div>
+      )}
     </aside>
   );
 }
@@ -513,5 +565,5 @@ function getCaptureMode() {
 
 function getProofMode(): ProofMode {
   const requested = new URLSearchParams(window.location.search).get('proof');
-  return requested === 'message' || requested === 'pr' ? requested : 'off';
+  return requested === 'message' || requested === 'pr' || requested === 'sequence' ? requested : 'off';
 }
