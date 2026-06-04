@@ -6,18 +6,24 @@ import type { Locator, Page } from '@playwright/test';
 const assets = {
   hero: 'docs/assets/open-loop-hero.png',
   pill: 'docs/assets/open-loop-pill.png',
+  domSelection: 'docs/assets/open-loop-dom-selection.png',
   targeting: 'docs/assets/open-loop-targeting.png',
   panel: 'docs/assets/open-loop-panel.png',
   handoff: 'docs/assets/open-loop-handoff.png',
+  messageFlow: 'docs/assets/open-loop-message-flow.png',
+  prProof: 'docs/assets/open-loop-pr-proof.png',
   video: 'docs/assets/open-loop-demo.webm'
 };
 
 const stillDimensions: Array<[string, { width: number; height: number }]> = [
   [assets.hero, { width: 1440, height: 960 }],
   [assets.pill, { width: 1437, height: 896 }],
+  [assets.domSelection, { width: 1093, height: 499 }],
   [assets.targeting, { width: 1093, height: 499 }],
   [assets.panel, { width: 464, height: 474 }],
-  [assets.handoff, { width: 440, height: 320 }]
+  [assets.handoff, { width: 440, height: 320 }],
+  [assets.messageFlow, { width: 600, height: 760 }],
+  [assets.prProof, { width: 600, height: 760 }]
 ];
 
 const STILL_STYLE = `
@@ -61,6 +67,14 @@ test('captures composed README screenshot states', async ({ page }, testInfo) =>
   await expect(page.locator('.olu-pointer-rect')).toContainText('Patch workflow node');
   await screenshotUnion(page, [page.locator('.olu-pointer-rect'), page.getByTestId('open-loop-panel')], assets.targeting, 26);
 
+  await addCaptureCursor(page, '.operator-node.n-2');
+  await screenshotUnion(
+    page,
+    [page.locator('.olu-pointer-rect'), page.getByTestId('open-loop-panel'), page.locator('.demo-capture-cursor')],
+    assets.domSelection,
+    26
+  );
+
   await preparePage(page, 'dashboard');
   await openPanelWithText(page, 'Tighten the spacing around the chart and make the hover state feel more tactile.');
   await expect(page.getByText('layout tweak')).toBeVisible();
@@ -77,6 +91,17 @@ test('captures composed README screenshot states', async ({ page }, testInfo) =>
     content: '.olu-toast { right: 52px !important; bottom: 118px !important; z-index: 9999 !important; }'
   });
   await screenshotClip(page, assets.handoff, { x: 980, y: 620, width: 440, height: 320 });
+
+  await preparePage(page, 'operator', { proof: 'message' });
+  await submitProofRequest(page);
+  await expect(page.getByText(/Branch preview is starting/i)).toBeVisible();
+  await screenshotClip(page, assets.messageFlow, { x: 820, y: 82, width: 600, height: 760 });
+
+  await preparePage(page, 'operator', { proof: 'pr' });
+  await submitProofRequest(page);
+  await expect(page.getByText(/PR #42 is up/i)).toBeVisible();
+  await expect(page.getByRole('button', { name: /approve/i })).toBeVisible();
+  await screenshotClip(page, assets.prProof, { x: 820, y: 82, width: 600, height: 760 });
 
   for (const [path, expected] of stillDimensions) {
     expect(existsSync(path), `${path} should exist`).toBe(true);
@@ -129,9 +154,11 @@ test('captures the README demo video', async ({ browser }, testInfo) => {
   expect(statSync(assets.video).size).toBeGreaterThan(50_000);
 });
 
-async function preparePage(page: Page, scene: string) {
+async function preparePage(page: Page, scene: string, options: { proof?: 'message' | 'pr' } = {}) {
   await page.addInitScript(fixedDateScript());
-  await page.goto(`/?scene=${scene}&capture=stills`);
+  const params = new URLSearchParams({ scene, capture: 'stills' });
+  if (options.proof) params.set('proof', options.proof);
+  await page.goto(`/?${params.toString()}`);
   await page.addStyleTag({ content: STILL_STYLE });
   await expect(page.getByTestId('demo-scene')).toBeVisible();
 }
@@ -155,10 +182,50 @@ async function selectTarget(page: Page, selector: string) {
   await clickTarget(page, selector);
 }
 
+async function submitProofRequest(page: Page) {
+  await openPanelWithText(page, 'Make the review queue easier to scan and give the active item a calmer highlight.');
+  await selectTarget(page, '.operator-queue');
+  await page.getByTestId('open-loop-submit').click();
+  await expect(page.getByTestId('open-loop-panel')).toBeHidden();
+  await expect(page.getByTestId('demo-proof-flow')).toBeVisible();
+  await page.addStyleTag({ content: '.olu-toast { display: none !important; }' });
+}
+
 async function clickTarget(page: Page, selector: string) {
   const box = await page.locator(selector).boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.click(box!.x + box!.width * 0.48, box!.y + box!.height * 0.5);
+}
+
+async function addCaptureCursor(page: Page, selector: string) {
+  const box = await page.locator(selector).boundingBox();
+  expect(box).not.toBeNull();
+  await page.evaluate(({ x, y }) => {
+    document.querySelector('.demo-capture-cursor')?.remove();
+    const cursor = document.createElement('div');
+    cursor.className = 'demo-capture-cursor';
+    cursor.style.cssText = [
+      'position: fixed',
+      `left: ${x}px`,
+      `top: ${y}px`,
+      'z-index: 2147483647',
+      'width: 38px',
+      'height: 38px',
+      'pointer-events: none',
+      'filter: drop-shadow(0 10px 14px rgb(0 0 0 / 0.28))'
+    ].join(';');
+    cursor.innerHTML = `
+      <svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true">
+        <path d="M8 5.5 31 22.6 20.4 25.1 16 35.5 8 5.5Z" fill="#123522" stroke="#f7fff2" stroke-width="2.8" />
+        <path d="M19.6 24.8 28 34" stroke="#f7fff2" stroke-width="3.2" stroke-linecap="round" />
+      </svg>
+    `;
+    document.body.append(cursor);
+  }, {
+    x: box!.x + box!.width * 0.56,
+    y: box!.y + box!.height * 0.56
+  });
+  await expect(page.locator('.demo-capture-cursor')).toBeVisible();
 }
 
 async function screenshotUnion(page: Page, locators: Locator[], path: string, padding: number) {

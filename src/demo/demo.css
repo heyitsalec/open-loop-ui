@@ -291,6 +291,7 @@ button {
 .demo-routes,
 .demo-feedback-lane,
 .demo-adapter,
+.demo-proof-flow,
 .demo-feed,
 .portfolio-card,
 .operator-rail,
@@ -851,6 +852,260 @@ button {
   color: oklch(82% 0.12 35);
 }
 
+.demo-proof-flow {
+  display: grid;
+  min-width: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 14px;
+  overflow: hidden;
+  padding: 16px;
+  border: 0;
+  border-radius: 0;
+  background:
+    radial-gradient(circle at 92% 12%, oklch(64% 0.12 148 / 0.28), transparent 24%),
+    oklch(18% 0.035 150);
+  color: oklch(94% 0.025 140);
+}
+
+.proof-head,
+.proof-message-meta,
+.proof-chip-row,
+.proof-status-list,
+.proof-pr-badge,
+.proof-actions,
+.proof-thumb-top {
+  display: flex;
+  align-items: center;
+}
+
+.proof-head {
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.proof-head strong {
+  display: block;
+  color: oklch(96% 0.03 140);
+  font-size: 13px;
+}
+
+.proof-head span,
+.proof-message-meta,
+.proof-chip-row span,
+.proof-status-list span,
+.proof-pr-badge,
+.proof-message code {
+  font-family: var(--olu-mono);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.proof-head span {
+  color: oklch(72% 0.04 145);
+}
+
+.proof-head svg {
+  color: oklch(82% 0.08 145);
+}
+
+.proof-thread {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.proof-message {
+  display: grid;
+  gap: 10px;
+  width: min(100%, 390px);
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid oklch(38% 0.035 150);
+  border-radius: 14px;
+  background: oklch(23% 0.035 150);
+  box-shadow: 0 14px 28px oklch(8% 0.02 150 / 0.22);
+}
+
+.proof-message.user {
+  justify-self: end;
+  background: oklch(30% 0.045 150);
+}
+
+.proof-message.agent {
+  justify-self: start;
+}
+
+.proof-message-meta {
+  justify-content: space-between;
+  gap: 10px;
+  color: oklch(72% 0.04 145);
+}
+
+.proof-message-meta span {
+  color: oklch(95% 0.04 145);
+}
+
+.proof-message p {
+  margin: 0;
+  color: oklch(91% 0.025 145);
+  font-size: 13px;
+  line-height: 1.48;
+}
+
+.proof-message p strong {
+  color: oklch(95% 0.065 85);
+}
+
+.proof-chip-row,
+.proof-status-list {
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.proof-chip-row span,
+.proof-status-list span,
+.proof-pr-badge {
+  gap: 5px;
+  width: fit-content;
+  min-height: 24px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: oklch(87% 0.055 145);
+  color: oklch(28% 0.065 150);
+  font-weight: 750;
+}
+
+.proof-status-list span {
+  border: 1px solid oklch(42% 0.04 150);
+  background: oklch(19% 0.03 150);
+  color: oklch(82% 0.055 145);
+}
+
+.proof-message code {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 8px;
+  border: 1px solid oklch(42% 0.04 150);
+  border-radius: 9px;
+  background: oklch(14% 0.028 150);
+  color: oklch(80% 0.055 145);
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.proof-review-card {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  gap: 11px;
+  padding: 10px;
+  border: 1px solid oklch(44% 0.045 150);
+  border-radius: 12px;
+  background: oklch(14% 0.028 150);
+}
+
+.proof-thumb {
+  overflow: hidden;
+  border: 1px solid oklch(50% 0.055 145);
+  border-radius: 10px;
+  background: oklch(96% 0.012 112);
+  box-shadow: 0 12px 24px oklch(8% 0.02 150 / 0.32);
+}
+
+.proof-thumb-top {
+  gap: 4px;
+  height: 18px;
+  padding: 0 7px;
+  background: oklch(22% 0.035 150);
+}
+
+.proof-thumb-top span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: oklch(82% 0.08 145);
+}
+
+.proof-thumb-body {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  min-height: 98px;
+}
+
+.proof-thumb-sidebar {
+  background: oklch(20% 0.035 248);
+}
+
+.proof-thumb-main {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  padding: 9px;
+  background:
+    linear-gradient(90deg, oklch(88% 0.01 248 / 0.55) 1px, transparent 1px),
+    linear-gradient(0deg, oklch(88% 0.01 248 / 0.55) 1px, transparent 1px),
+    oklch(98% 0.006 100);
+  background-size: 14px 14px;
+}
+
+.proof-thumb-main strong {
+  color: var(--olu-ink);
+  font-size: 10px;
+}
+
+.proof-thumb-row {
+  display: block;
+  width: 100%;
+  height: 18px;
+  border: 1px solid var(--olu-border);
+  border-radius: 5px;
+  background: var(--olu-surface);
+}
+
+.proof-thumb-row.active {
+  border-color: var(--olu-accent);
+  background: oklch(90% 0.06 145);
+  box-shadow: 0 0 0 3px oklch(86% 0.045 138 / 0.45);
+}
+
+.proof-pr-badge {
+  margin-bottom: 7px;
+  background: oklch(88% 0.07 142);
+}
+
+.proof-actions {
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.proof-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid color-mix(in oklch, var(--olu-accent) 52%, oklch(100% 0 0 / 0.24));
+  border-radius: 999px;
+  background: var(--olu-accent);
+  color: var(--olu-bg);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.proof-actions button.secondary {
+  border-color: oklch(42% 0.04 150);
+  background: oklch(20% 0.035 150);
+  color: oklch(88% 0.04 145);
+}
+
 @media (max-width: 1080px) {
   .demo-grid,
   .demo-topbar,
@@ -873,6 +1128,10 @@ button {
 
   .demo-adapter {
     min-height: 420px;
+  }
+
+  .demo-proof-flow {
+    min-height: 520px;
   }
 
   .operator-rail {

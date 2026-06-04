@@ -53,9 +53,11 @@ Open the pill, click a real element, and Open Loop records the label, selector, 
 The demo captures README-ready Playwright assets from sanitized app scenes:
 
 - the quiet floating pill
-- the DOM element targeting overlay
+- the DOM element targeting overlay, including a cursor over the selected element
 - the live routing panel
 - the adapter handoff after submit
+- a mock message handoff flow
+- a mock PR-ready proof card with a rendered preview image and approve button
 - a short WebM walkthrough of the same flow
 
 The screenshots and video are generated from real interaction states, not mocked pixels. That is the whole trick: the component can prove its own UX in review.
@@ -68,13 +70,17 @@ The screenshots and video are generated from real interaction states, not mocked
 |---|---|
 | ![Open Loop UI hero flow](docs/assets/open-loop-hero.png) | ![Floating Improve UI pill](docs/assets/open-loop-pill.png) |
 
-| Element targeting | Live panel |
+| DOM selection | Live panel |
 |---|---|
-| ![Open Loop element targeting](docs/assets/open-loop-targeting.png) | ![Open Loop panel](docs/assets/open-loop-panel.png) |
+| ![Open Loop DOM selection with cursor](docs/assets/open-loop-dom-selection.png) | ![Open Loop panel](docs/assets/open-loop-panel.png) |
 
-| Adapter handoff |
+| Message handoff | PR proof |
 |---|---|
-| ![Open Loop handoff](docs/assets/open-loop-handoff.png) |
+| ![Open Loop message handoff](docs/assets/open-loop-message-flow.png) | ![Open Loop PR proof](docs/assets/open-loop-pr-proof.png) |
+
+| Adapter handoff | Targeting crop |
+|---|---|
+| ![Open Loop handoff](docs/assets/open-loop-handoff.png) | ![Open Loop element targeting](docs/assets/open-loop-targeting.png) |
 
 ## CLI Adapter Contract
 

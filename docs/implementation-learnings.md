@@ -7,6 +7,7 @@ Open Loop UI came from a few private experiments with the same tiny idea: a floa
 - **Routing preview matters.** The strongest versions made the handoff visible before submit: kind, route, depth, selected target, and local preview state.
 - **The picker needs real labels.** `data-open-loop-label` is the clean public version of the pattern. It keeps screenshots readable and payloads useful.
 - **Filed-item polish is part of the pitch.** A success toast and local item feed make the loop feel finished instead of disappearing into a black box.
+- **Chat can be the return lane.** A useful loop does not stop at "request sent"; it can show when a branch or PR is ready, attach a rendered preview image, and give the reviewer a clear approve action.
 - **Screenshots should be generated, not hand-curated.** Deterministic Playwright states make the README and PR proof repeatable.
 - **Video is the fastest explanation.** A short WebM showing pill -> target -> submit explains the component before anyone reads the API.
 
@@ -24,4 +25,5 @@ The public package should stay boring at the boundary: collect intent, describe 
 - The public package has the cleanest API and theme surface.
 - Older private widgets had useful ideas around screenshot drop, PR status, and filed-item history.
 - The most compelling UI state is still the routing preview plus a highlighted DOM target.
+- The next strongest state is the proof return: request message, PR-ready status, screenshot thumbnail, approve button.
 - The capture harness should keep improving before the repo goes public, because the visuals are the pitch.

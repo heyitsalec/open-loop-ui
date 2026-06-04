@@ -7,15 +7,20 @@ import {
   Compass,
   FileText,
   GitBranch,
+  GitPullRequest,
+  Image as ImageIcon,
   Layers3,
   LayoutDashboard,
+  MessageSquareText,
   MonitorDot,
   MousePointer2,
   Palette,
   PanelRight,
   Phone,
   RadioTower,
+  Send,
   Sparkles,
+  ThumbsUp,
   Wand2
 } from 'lucide-react';
 import type { CSSProperties, ReactElement, ReactNode } from 'react';
@@ -24,6 +29,7 @@ import { useOpenLoop } from '../context';
 
 const sceneIds = ['dashboard', 'portfolio', 'operator', 'mobile'] as const;
 type DemoSceneId = (typeof sceneIds)[number];
+type ProofMode = 'off' | 'message' | 'pr';
 
 type SceneConfig = {
   id: DemoSceneId;
@@ -90,10 +96,16 @@ export function DemoApp() {
   const [sceneId, setSceneId] = useState<DemoSceneId>(() => initialScene());
   const scene = scenes[sceneId];
   const captureMode = getCaptureMode();
+  const proofMode = getProofMode();
   const Scene = scene.component;
 
   return (
-    <main className={`demo-shell scene-${scene.id}`} data-capture-mode={captureMode} data-demo-scene={scene.id}>
+    <main
+      className={`demo-shell scene-${scene.id}`}
+      data-capture-mode={captureMode}
+      data-demo-scene={scene.id}
+      data-proof-mode={proofMode}
+    >
       <section className="demo-workbench" aria-label="Open Loop UI demo workbench">
         <DemoTopbar scene={scene} onSceneChange={setSceneId} />
         <div className="demo-grid">
@@ -106,7 +118,7 @@ export function DemoApp() {
             <SceneHero scene={scene} />
             <Scene />
           </section>
-          <AdapterPanel scene={scene} />
+          {proofMode === 'off' ? <AdapterPanel scene={scene} /> : <ProofFlowPanel mode={proofMode} scene={scene} />}
         </div>
       </section>
     </main>
@@ -399,6 +411,96 @@ function AdapterPanel({ scene }: { scene: SceneConfig }) {
   );
 }
 
+function ProofFlowPanel({ mode, scene }: { mode: Exclude<ProofMode, 'off'>; scene: SceneConfig }) {
+  const loop = useOpenLoop();
+  const payload = loop.lastPayload ?? loop.previewPayload;
+  const item = loop.items[0];
+  const requestText = payload?.text ?? 'Make the review queue easier to scan and give the active item a calmer highlight.';
+  const targetLabel = payload?.target?.label ?? 'Review queue panel';
+  const selector = payload?.target?.selector ?? '[data-open-loop-label="Review queue panel"]';
+  const itemId = item?.id ?? 'LOOP-G0W00';
+  const routeLabel = (payload?.classification.kind ?? 'ui_feedback').replace(/_/g, ' ');
+
+  return (
+    <aside
+      className={`demo-proof-flow proof-${mode}`}
+      data-testid="demo-proof-flow"
+      data-open-loop-label="Proof chat rail"
+      data-open-loop-id="proof-chat-rail"
+    >
+      <div className="proof-head">
+        <div>
+          <strong>Handoff chat</strong>
+          <span>{scene.label} / public-safe mock flow</span>
+        </div>
+        <MessageSquareText size={17} />
+      </div>
+
+      <div className="proof-thread">
+        <article className="proof-message user">
+          <div className="proof-message-meta">
+            <span>You</span>
+            <small>request sent</small>
+          </div>
+          <p>{requestText}</p>
+          <div className="proof-chip-row">
+            <span>@ {targetLabel}</span>
+            <span>{routeLabel}</span>
+          </div>
+          <code>{selector}</code>
+        </article>
+
+        <article className="proof-message agent">
+          <div className="proof-message-meta">
+            <span>Open Loop Agent</span>
+            <small>{mode === 'message' ? 'working' : 'ready for review'}</small>
+          </div>
+          {mode === 'message' ? (
+            <>
+              <p>Filed <strong>{itemId}</strong>. Branch preview is starting; screenshot proof will land back here when the change is ready.</p>
+              <div className="proof-status-list">
+                <span><Send size={12} /> JSON received</span>
+                <span><GitPullRequest size={12} /> PR pending</span>
+                <span><ImageIcon size={12} /> preview queued</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <p><strong>PR #42 is up.</strong> The preview run attached a rendered image of the changed component.</p>
+              <div className="proof-review-card">
+                <div className="proof-thumb" aria-label="Rendered preview screenshot" role="img">
+                  <div className="proof-thumb-top">
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                  <div className="proof-thumb-body">
+                    <div className="proof-thumb-sidebar" />
+                    <div className="proof-thumb-main">
+                      <strong>Review queue</strong>
+                      <span className="proof-thumb-row active" />
+                      <span className="proof-thumb-row" />
+                      <span className="proof-thumb-row" />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <span className="proof-pr-badge"><GitPullRequest size={12} /> PR #42</span>
+                  <p>Queue card contrast tightened, spacing normalized, hover state softened.</p>
+                  <div className="proof-actions">
+                    <button type="button"><ThumbsUp size={13} /> Approve</button>
+                    <button type="button" className="secondary">View diff</button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </article>
+      </div>
+    </aside>
+  );
+}
+
 function initialScene(): DemoSceneId {
   const params = new URLSearchParams(window.location.search);
   const requested = params.get('scene');
@@ -407,4 +509,9 @@ function initialScene(): DemoSceneId {
 
 function getCaptureMode() {
   return new URLSearchParams(window.location.search).get('capture') ?? 'off';
+}
+
+function getProofMode(): ProofMode {
+  const requested = new URLSearchParams(window.location.search).get('proof');
+  return requested === 'message' || requested === 'pr' ? requested : 'off';
 }

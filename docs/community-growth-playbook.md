@@ -6,6 +6,7 @@ This is the low-drama plan for earning attention without pretending the internet
 
 - **Pin the visual proof first.** Keep the README screenshot above the fold, then show targeting, panel, and handoff screenshots before the deeper API details.
 - **Keep the 20-30 second demo clip sharp.** A short `open-loop-demo.webm` showing pill -> target -> submit -> JSON handoff will do more than five paragraphs.
+- **Show why it beats chat alone.** Use `open-loop-dom-selection.png`, `open-loop-message-flow.png`, and `open-loop-pr-proof.png` together: clicked DOM target, request sent, preview image returned for approval.
 - **Use sharp GitHub topics.** Start with `react`, `typescript`, `vite`, `ui`, `design-tools`, `developer-tools`, `feedback`, `playwright`, `agent-tools`.
 - **Make the repo description concrete.** Suggested: `A floating design feedback loop for React apps: click a DOM element, describe the fix, hand JSON to your agent or CLI.`
 - **Add a social preview image.** Use `docs/assets/open-loop-hero.png` or a cropped composite of targeting + panel.
@@ -67,6 +68,7 @@ Portfolio caption:
 
 - "Add a tiny Improve UI button to any React app."
 - "Click a DOM element, not just a blank comment field."
+- "The loop comes back with a preview image and an approval path."
 - "Model-agnostic: your adapter decides what happens next."
 - "Playwright-backed screenshots prove the interaction in PR review."
 - "Useful for dashboards, internal tools, portfolios, agent workbenches, and app prototypes."
