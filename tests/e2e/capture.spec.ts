@@ -119,7 +119,7 @@ test('captures the README demo video', async ({ browser }, testInfo) => {
   mkdirSync(dirname(assets.video), { recursive: true });
 
   const context = await browser.newContext({
-    baseURL: 'http://127.0.0.1:5173',
+    baseURL: 'http://127.0.0.1:5174',
     viewport: { width: 1280, height: 720 },
     deviceScaleFactor: 1,
     recordVideo: {

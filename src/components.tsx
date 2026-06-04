@@ -1,5 +1,6 @@
 import { Check, ChevronRight, MousePointer2, RefreshCw, Send, Sparkles, X } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useId, useRef } from 'react';
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useOpenLoop } from './context';
 import type { OpenLoopFeedbackKind, OpenLoopRoute } from './types';
 
@@ -61,11 +62,20 @@ export function OpenLoopPill() {
 export function OpenLoopPanel() {
   const loop = useOpenLoop();
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  const panelRef = useRef<HTMLElement | null>(null);
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
+  const titleId = useId();
+  const descriptionId = useId();
 
   useEffect(() => {
     if (!loop.open) return undefined;
+    restoreFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const handle = window.setTimeout(() => inputRef.current?.focus(), 60);
-    return () => window.clearTimeout(handle);
+    return () => {
+      window.clearTimeout(handle);
+      if (restoreFocusRef.current?.isConnected) restoreFocusRef.current.focus();
+      restoreFocusRef.current = null;
+    };
   }, [loop.open]);
 
   if (!loop.open) return null;
@@ -74,21 +84,28 @@ export function OpenLoopPanel() {
       <button
         className={`olu-backdrop ${loop.sent ? 'sent' : ''}`}
         type="button"
-        aria-label={loop.labels.close}
+        aria-hidden="true"
+        tabIndex={-1}
         onClick={loop.closePanel}
       />
       <section
+        ref={panelRef}
         className={`olu-panel ${loop.sent ? 'sent' : ''}`}
         data-testid="open-loop-panel"
         role="dialog"
-        aria-label={loop.labels.title}
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={descriptionId}
         onClick={(event) => event.stopPropagation()}
         onMouseDown={(event) => event.stopPropagation()}
+        onKeyDown={(event) => {
+          if (event.key === 'Tab') trapDialogFocus(event, panelRef.current);
+        }}
       >
         <div className="olu-panel-head">
           <div>
-            <h2>{splitTitle(loop.labels.title)}</h2>
-            <span>{loop.labels.subtitle}</span>
+            <h2 id={titleId}>{splitTitle(loop.labels.title)}</h2>
+            <span id={descriptionId}>{loop.labels.subtitle}</span>
           </div>
           <button className="olu-icon-button" type="button" onClick={loop.closePanel} aria-label={loop.labels.close}>
             <X size={15} />
@@ -104,7 +121,12 @@ export function OpenLoopPanel() {
               </button>
             </div>
           ) : (
-            <button className={`olu-anchor ${loop.pointing ? 'active' : ''}`} type="button" onClick={loop.startTargeting}>
+            <button
+              className={`olu-anchor ${loop.pointing ? 'active' : ''}`}
+              type="button"
+              aria-pressed={loop.pointing}
+              onClick={loop.startTargeting}
+            >
               <MousePointer2 size={13} />
               {loop.pointing ? loop.labels.pointing : loop.labels.pointAtElement}
             </button>
@@ -124,7 +146,6 @@ export function OpenLoopPanel() {
               event.preventDefault();
               void loop.submit();
             }
-            if (event.key === 'Escape') loop.closePanel();
           }}
         />
 
@@ -212,4 +233,35 @@ function splitTitle(title: string) {
   const [first, ...rest] = title.split(/\s+/);
   if (rest.length === 0) return title;
   return <>{first} <em>{rest.join(' ')}</em></>;
+}
+
+function trapDialogFocus(event: ReactKeyboardEvent, panel: HTMLElement | null) {
+  if (!panel) return;
+  const focusable = getFocusableElements(panel);
+  if (focusable.length === 0) {
+    event.preventDefault();
+    return;
+  }
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+    return;
+  }
+  if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+function getFocusableElements(root: HTMLElement): HTMLElement[] {
+  return Array.from(root.querySelectorAll<HTMLElement>([
+    'a[href]',
+    'button:not([disabled])',
+    'textarea:not([disabled])',
+    'input:not([disabled])',
+    'select:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])'
+  ].join(','))).filter((element) => !element.hasAttribute('hidden') && element.getAttribute('aria-hidden') !== 'true');
 }

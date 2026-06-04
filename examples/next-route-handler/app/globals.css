@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #f6f7f3;
+  color: #193326;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.shell {
+  display: grid;
+  min-height: 100vh;
+  align-content: center;
+  gap: 16px;
+  padding: 32px;
+}
+
+.panel {
+  max-width: 720px;
+  padding: 28px;
+  border: 1px solid #cfd8ce;
+  border-radius: 8px;
+  background: white;
+}
+
+.panel h1 {
+  margin: 0 0 10px;
+  font-size: 42px;
+  line-height: 1;
+}
+
+.panel p {
+  margin: 0;
+  color: #516258;
+}

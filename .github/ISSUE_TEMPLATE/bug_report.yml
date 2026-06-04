@@ -1,0 +1,29 @@
+name: Bug report
+description: Report something broken or surprising.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug and the behavior you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Share steps, a small repo, or a code snippet.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: 0.1.0
+  - type: input
+    id: react
+    attributes:
+      label: React version
+      placeholder: 18.3.1 or 19.2.0

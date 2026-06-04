@@ -1,10 +1,23 @@
 # Screenshot Playbook
 
-The README screenshots are captured by Playwright, because "trust me, it looks cool" is not quite the professional artifact we deserve:
+The README screenshots are captured by Playwright, because "trust me, it looks cool" is not quite the professional artifact we deserve.
+
+For normal CI and local smoke checks, use:
+
+```bash
+npm run test:e2e:smoke
+```
+
+To intentionally refresh the visual assets, use:
+
+```bash
+npm run capture
+```
+
+To run the full browser suite, including capture, use:
 
 ```bash
 npm run test:e2e
-npm run capture
 ```
 
 The capture flow writes:
@@ -19,7 +32,7 @@ The capture flow writes:
 - `docs/assets/open-loop-pr-proof.png`
 - `docs/assets/open-loop-demo.webm`
 
-`npm run test:e2e` runs the whole browser suite and refreshes assets. `npm run capture` runs only the capture spec. Set `OPEN_LOOP_CAPTURE_GIF=1` to write `docs/assets/open-loop-demo.gif` too, but keep WebM as the primary video artifact.
+`npm run capture` runs only the capture spec. Set `OPEN_LOOP_CAPTURE_GIF=1` to write `docs/assets/open-loop-demo.gif` too, but keep WebM as the primary video artifact.
 
 Before publishing, inspect the images and keep only states that communicate the value quickly:
 
@@ -44,7 +57,7 @@ For launch PRs, attach the Playwright images directly in the PR thread or chat s
 - `open-loop-pr-proof.png` shows the payoff: preview image in chat plus approval.
 - `open-loop-handoff.png` proves the payload is real, structured, and adapter-ready.
 
-The video should sit next to those stills:
+The demo video captures the same flow:
 
 1. Pill appears on a normal app screen.
 2. User opens the panel.

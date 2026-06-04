@@ -19,6 +19,7 @@ describe('OpenLoopProvider', () => {
     renderLoop();
     fireEvent.click(screen.getByTestId('open-loop-pill'));
     expect(screen.getByTestId('open-loop-panel')).toBeVisible();
+    expect(screen.getByTestId('open-loop-panel')).toHaveAttribute('aria-modal', 'true');
 
     fireEvent.change(screen.getByTestId('open-loop-input'), {
       target: { value: 'Spacing around the chart feels crowded' }
@@ -26,6 +27,17 @@ describe('OpenLoopProvider', () => {
 
     expect(screen.getByText('layout tweak')).toBeVisible();
     expect(screen.getAllByText('Spacing around the chart feels crowded')).toHaveLength(2);
+  });
+
+  it('does not wrap host app children in Open Loop layout chrome', () => {
+    const { container } = render(
+      <OpenLoopProvider renderChrome={false}>
+        <button type="button" data-testid="host-button">Host button</button>
+      </OpenLoopProvider>
+    );
+
+    expect(container.firstElementChild).toBe(screen.getByTestId('host-button'));
+    expect(screen.getByTestId('host-button').closest('[data-open-loop-root]')).toBeNull();
   });
 
   it('submits through the adapter and shows a toast', async () => {
@@ -52,6 +64,14 @@ describe('OpenLoopProvider', () => {
     expect(screen.queryByTestId('open-loop-pointer')).not.toBeInTheDocument();
 
     fireEvent.keyDown(screen.getByTestId('open-loop-input'), { key: 'Escape' });
+    expect(screen.queryByTestId('open-loop-panel')).not.toBeInTheDocument();
+  });
+
+  it('closes the panel from Escape even when focus leaves the textarea', () => {
+    renderLoop();
+    fireEvent.click(screen.getByTestId('open-loop-pill'));
+    fireEvent.keyDown(window, { key: 'Escape' });
+
     expect(screen.queryByTestId('open-loop-panel')).not.toBeInTheDocument();
   });
 

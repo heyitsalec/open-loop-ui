@@ -7,6 +7,7 @@ Open Loop UI is designed to be usable without pointer precision. The shiny part 
 - `Esc` exits targeting or closes the panel.
 - `Cmd+Enter` / `Ctrl+Enter` submits feedback.
 - Focus moves to the textarea when the panel opens.
+- The panel uses dialog semantics, basic focus containment, and focus restoration where the opener remains mounted.
 - Reduced-motion preferences disable decorative animations.
 
 When you label targetable areas, use short human-readable names:

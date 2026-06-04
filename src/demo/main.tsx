@@ -6,7 +6,12 @@ import '../styles.css';
 import { DemoApp } from './DemoApp';
 import './demo.css';
 
-const demoAdapter = createMockAdapter({ delayMs: 240, externalIdPrefix: 'OPEN' });
+const demoParams = new URLSearchParams(window.location.search);
+const demoAdapter = createMockAdapter({
+  delayMs: 240,
+  externalIdPrefix: 'OPEN',
+  fail: demoParams.has('failAdapter')
+});
 const demoMetadata = { environment: 'local-demo', adapter: 'mock-cli-shape' };
 
 createRoot(document.getElementById('root')!).render(

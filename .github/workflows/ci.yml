@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  quality:
+    name: React ${{ matrix.react }} quality
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - react: "18"
+            react_version: "18.3.1"
+            react_dom_version: "18.3.1"
+          - react: "19"
+            react_version: "19.2.0"
+            react_dom_version: "19.2.0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install React ${{ matrix.react }}
+        run: npm install --no-save --package-lock=false react@${{ matrix.react_version }} react-dom@${{ matrix.react_dom_version }}
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: Verify packed consumer install
+        if: matrix.react == '19'
+        run: npm run test:consumer
+      - run: npm pack --dry-run
+
+  e2e:
+    name: Playwright smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e:smoke -- --project=chromium

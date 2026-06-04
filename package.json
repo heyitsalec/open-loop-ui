@@ -1,9 +1,10 @@
 {
   "name": "@alecbot/open-loop-ui",
   "version": "0.1.0",
-  "private": true,
   "description": "A drop-in floating design feedback loop for React apps.",
+  "author": "Alec Bot <hey@heyitsalec.com>",
   "type": "module",
+  "packageManager": "npm@11.12.1",
   "sideEffects": [
     "src/styles.css",
     "dist/styles.css"
@@ -30,23 +31,37 @@
     "dist",
     "README.md",
     "LICENSE",
-    "docs"
+    "docs/**/*.md"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heyitsalec/open-loop-ui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/heyitsalec/open-loop-ui/issues"
+  },
+  "homepage": "https://heyitsalec.github.io/open-loop-ui/",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "node scripts/clean-dist.mjs && vite build && tsc -p tsconfig.build.json --emitDeclarationOnly && node scripts/copy-styles.mjs",
+    "build:demo": "vite build --config vite.demo.config.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:consumer": "npm run build && node tests/consumer/verify-packed-package.mjs",
     "test:e2e": "playwright test",
+    "test:e2e:smoke": "playwright test tests/e2e/demo.spec.ts",
     "capture": "node scripts/capture-assets.mjs",
     "stories": "ladle serve",
     "build:stories": "ladle build"
   },
   "peerDependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
   },
   "dependencies": {
     "lucide-react": "^0.554.0"

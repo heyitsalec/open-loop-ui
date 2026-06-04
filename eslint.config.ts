@@ -4,8 +4,19 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist', '.ladle', 'coverage', 'playwright-report', 'test-results'] },
+  { ignores: ['dist', 'demo-dist', '.ladle', 'coverage', 'playwright-report', 'test-results'] },
   js.configs.recommended,
+  {
+    files: ['scripts/**/*.mjs', 'tests/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        fetch: 'readonly',
+        process: 'readonly',
+        setTimeout: 'readonly'
+      }
+    }
+  },
   ...tseslint.configs.recommended,
   {
     files: ['scripts/**/*.mjs'],
