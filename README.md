@@ -1,6 +1,5 @@
 # Open Loop UI
 
-[![CI](https://github.com/heyitsalec/open-loop-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/heyitsalec/open-loop-ui/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/%40alecbot%2Fopen-loop-ui.svg)](https://www.npmjs.com/package/@alecbot/open-loop-ui)
 [![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
@@ -16,7 +15,7 @@ It is meant to sit inside almost any application: dashboards, mobile shells, int
 npm install @alecbot/open-loop-ui
 ```
 
-Works with React 18 and 19. Try the hosted demo at [heyitsalec.github.io/open-loop-ui](https://heyitsalec.github.io/open-loop-ui/).
+Works with React 18 and 19. The static demo ships with the repo and can be built with `npm run build:demo`.
 
 ```tsx
 import { OpenLoopProvider } from '@alecbot/open-loop-ui';
