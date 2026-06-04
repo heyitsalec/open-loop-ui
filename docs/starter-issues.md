@@ -8,11 +8,11 @@ Labels: `good first issue`, `example`, `nextjs`
 
 Create an `examples/next-route-handler` flow that shows a browser-safe provider calling a route handler, with the route handler logging or forwarding the Open Loop payload.
 
-## Add a tiny demo video
+## Keep the tiny demo video sharp
 
 Labels: `good first issue`, `docs`, `visuals`
 
-Record a 20-30 second clip of pill -> target -> submit -> JSON handoff. Save it as `docs/assets/open-loop-demo.webm` or a small GIF and embed it near the top of the README.
+Review the 6-9 second hero clip after each major UI change. Keep the flow focused on pill -> target -> message -> PR proof, and regenerate `docs/assets/open-loop-demo.gif` plus `docs/assets/open-loop-demo.webm` with `npm run capture`.
 
 ## Add theme presets
 

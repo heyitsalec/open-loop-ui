@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/%40alecbot%2Fopen-loop-ui.svg)](https://www.npmjs.com/package/@alecbot/open-loop-ui)
 [![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-![Open Loop UI hero screenshot](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-hero.png)
+![Open Loop UI end-to-end demo](docs/assets/open-loop-demo.gif)
 
 A drop-in floating design feedback loop for React apps. Tiny button, big opinions.
 
@@ -73,29 +73,29 @@ The demo captures README-ready Playwright assets from sanitized app scenes:
 - the adapter handoff after submit
 - a mock message handoff flow
 - a mock PR-ready proof card with a rendered preview image and approve button
-- a short WebM walkthrough of the same flow
+- a tight 6-9 second GIF/WebM walkthrough of the same flow
 
 The screenshots and video are generated from real interaction states, not mocked pixels. That is the whole trick: the component can prove its own UX in review.
 
-<video src="https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-demo.webm" controls muted playsinline></video>
+[Watch the higher-quality WebM walkthrough](docs/assets/open-loop-demo.webm).
 
 ## Screenshots
 
 | Hero flow | Floating pill |
 |---|---|
-| ![Open Loop UI hero flow](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-hero.png) | ![Floating Improve UI pill](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-pill.png) |
+| ![Open Loop UI hero flow](docs/assets/open-loop-hero.png) | ![Floating Improve UI pill](docs/assets/open-loop-pill.png) |
 
 | DOM selection | Live panel |
 |---|---|
-| ![Open Loop DOM selection with cursor](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-dom-selection.png) | ![Open Loop panel](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-panel.png) |
+| ![Open Loop DOM selection with cursor](docs/assets/open-loop-dom-selection.png) | ![Open Loop panel](docs/assets/open-loop-panel.png) |
 
 | Message handoff | PR proof |
 |---|---|
-| ![Open Loop message handoff](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-message-flow.png) | ![Open Loop PR proof](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-pr-proof.png) |
+| ![Open Loop message handoff](docs/assets/open-loop-message-flow.png) | ![Open Loop PR proof](docs/assets/open-loop-pr-proof.png) |
 
 | Adapter handoff | Targeting crop |
 |---|---|
-| ![Open Loop handoff](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-handoff.png) | ![Open Loop element targeting](https://raw.githubusercontent.com/heyitsalec/open-loop-ui/main/docs/assets/open-loop-targeting.png) |
+| ![Open Loop handoff](docs/assets/open-loop-handoff.png) | ![Open Loop element targeting](docs/assets/open-loop-targeting.png) |
 
 ## CLI Adapter Contract
 
@@ -158,7 +158,7 @@ npm run build
 npm run test:e2e:smoke
 ```
 
-`npm run test:e2e:smoke` avoids rewriting tracked screenshots. Use `npm run test:e2e` when you intentionally want the full browser suite, including asset refresh. Use `npm run capture` when you only want to refresh the README screenshots and WebM under `docs/assets/`; set `OPEN_LOOP_CAPTURE_GIF=1` to also write an optional GIF when `ffmpeg` is installed.
+`npm run test:e2e:smoke` avoids rewriting tracked screenshots. Use `npm run test:e2e` when you intentionally want the full browser suite, including asset refresh. Use `npm run capture` when you only want to refresh the README screenshots, WebM, and GIF under `docs/assets/`; set `OPEN_LOOP_CAPTURE_GIF=0` to skip GIF conversion.
 
 Build the static demo with:
 

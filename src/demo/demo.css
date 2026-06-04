@@ -872,6 +872,8 @@ button {
 .proof-chip-row,
 .proof-status-list,
 .proof-pr-badge,
+.proof-thinking-row,
+.proof-asset-row,
 .proof-actions,
 .proof-thumb-top {
   display: flex;
@@ -940,6 +942,11 @@ button {
   justify-self: start;
 }
 
+.proof-message.agent.proof-waiting {
+  border-color: oklch(44% 0.045 150);
+  background: oklch(21% 0.032 150);
+}
+
 .proof-message-meta {
   justify-content: space-between;
   gap: 10px;
@@ -986,6 +993,28 @@ button {
   color: oklch(82% 0.055 145);
 }
 
+.proof-thinking-row {
+  gap: 7px;
+  min-height: 18px;
+}
+
+.proof-thinking-row span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: oklch(84% 0.07 145);
+  box-shadow: 0 0 0 5px oklch(84% 0.07 145 / 0.08);
+  animation: proof-dot 980ms ease-in-out infinite;
+}
+
+.proof-thinking-row span:nth-child(2) {
+  animation-delay: 140ms;
+}
+
+.proof-thinking-row span:nth-child(3) {
+  animation-delay: 280ms;
+}
+
 .proof-message code {
   display: block;
   max-width: 100%;
@@ -1011,6 +1040,7 @@ button {
 }
 
 .proof-thumb {
+  position: relative;
   overflow: hidden;
   border: 1px solid oklch(50% 0.055 145);
   border-radius: 10px;
@@ -1074,9 +1104,57 @@ button {
   box-shadow: 0 0 0 3px oklch(86% 0.045 138 / 0.45);
 }
 
+.proof-play {
+  position: absolute;
+  right: 9px;
+  bottom: 9px;
+  display: block;
+  width: 24px;
+  height: 24px;
+  border: 1px solid oklch(100% 0 0 / 0.78);
+  border-radius: 50%;
+  background: oklch(18% 0.035 150 / 0.86);
+  box-shadow: 0 8px 18px oklch(8% 0.02 150 / 0.36);
+}
+
+.proof-play::before {
+  position: absolute;
+  left: 9px;
+  top: 6px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 8px solid oklch(96% 0.03 145);
+  content: "";
+}
+
 .proof-pr-badge {
   margin-bottom: 7px;
   background: oklch(88% 0.07 142);
+}
+
+.proof-asset-row {
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.proof-asset-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 24px;
+  padding: 4px 8px;
+  border: 1px solid oklch(42% 0.04 150);
+  border-radius: 999px;
+  background: oklch(20% 0.035 150);
+  color: oklch(84% 0.055 145);
+  font-family: var(--olu-mono);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
 
 .proof-actions {
@@ -1104,6 +1182,19 @@ button {
   border-color: oklch(42% 0.04 150);
   background: oklch(20% 0.035 150);
   color: oklch(88% 0.04 145);
+}
+
+@keyframes proof-dot {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
 }
 
 @media (max-width: 1080px) {

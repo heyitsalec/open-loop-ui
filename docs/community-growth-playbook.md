@@ -5,7 +5,7 @@ This is the low-drama plan for earning attention without pretending the internet
 ## Easy Wins Before Public Launch
 
 - **Pin the visual proof first.** Keep the README screenshot above the fold, then show targeting, panel, and handoff screenshots before the deeper API details.
-- **Keep the 20-30 second demo clip sharp.** A short `open-loop-demo.webm` showing pill -> target -> submit -> JSON handoff will do more than five paragraphs.
+- **Keep the 6-9 second demo clip sharp.** A short `open-loop-demo.gif`/`open-loop-demo.webm` showing pill -> target -> message -> PR proof will do more than five paragraphs.
 - **Show why it beats chat alone.** Use `open-loop-dom-selection.png`, `open-loop-message-flow.png`, and `open-loop-pr-proof.png` together: clicked DOM target, request sent, preview image returned for approval.
 - **Use sharp GitHub topics.** Start with `react`, `typescript`, `vite`, `ui`, `design-tools`, `developer-tools`, `feedback`, `playwright`, `agent-tools`.
 - **Make the repo description concrete.** Suggested: `A floating design feedback loop for React apps: click a DOM element, describe the fix, hand JSON to your agent or CLI.`

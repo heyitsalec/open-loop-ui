@@ -18,8 +18,8 @@ const assets = {
 const stillDimensions: Array<[string, { width: number; height: number }]> = [
   [assets.hero, { width: 1440, height: 960 }],
   [assets.pill, { width: 1437, height: 896 }],
-  [assets.domSelection, { width: 1093, height: 499 }],
-  [assets.targeting, { width: 1093, height: 499 }],
+  [assets.domSelection, { width: 1093, height: 551 }],
+  [assets.targeting, { width: 1093, height: 551 }],
   [assets.panel, { width: 464, height: 474 }],
   [assets.handoff, { width: 440, height: 320 }],
   [assets.messageFlow, { width: 600, height: 760 }],
@@ -130,17 +130,39 @@ test('captures the README demo video', async ({ browser }, testInfo) => {
   await context.addInitScript(fixedDateScript());
   const page = await context.newPage();
 
-  await page.goto('/?scene=dashboard&capture=video');
+  await page.goto('/?scene=operator&capture=video&proof=sequence');
+  await expect(page.getByTestId('demo-scene')).toBeVisible();
+  await expect(page.getByTestId('demo-proof-waiting')).toBeVisible();
+  await page.addStyleTag({ content: '.olu-toast { display: none !important; }' });
+  await page.waitForTimeout(300);
   await page.getByTestId('open-loop-pill').click();
-  await page.getByTestId('open-loop-input').fill('Tighten the spacing around the chart and make the hover state feel more tactile.');
-  await page.waitForTimeout(400);
-  await startTargeting(page, '[data-open-loop-id="dashboard-chart"]');
-  await page.waitForTimeout(400);
-  await clickTarget(page, '[data-open-loop-id="dashboard-chart"]');
+  await page.waitForTimeout(200);
+  const input = page.getByTestId('open-loop-input');
+  await input.click();
+  await input.pressSequentially('Make the review queue easier to scan.', { delay: 12 });
+  await page.waitForTimeout(200);
+  await startTargeting(page, '.operator-node.n-2', { cursor: true });
+  await expect(page.locator('.olu-pointer-rect')).toContainText('workflow node');
   await page.waitForTimeout(350);
+  await hoverCaptureTarget(page, '.operator-node.n-1', { cursor: true });
+  await expect(page.locator('.olu-pointer-rect')).toContainText('workflow node');
+  await page.waitForTimeout(350);
+  await hoverCaptureTarget(page, '.operator-queue', { cursor: true });
+  await expect(page.locator('.olu-pointer-rect')).toContainText('Operator queue panel');
+  await page.waitForTimeout(450);
+  await clickTarget(page, '.operator-queue');
+  await page.waitForTimeout(250);
+  await expect(page.getByText(/anchored to/i)).toBeVisible();
   await page.getByTestId('open-loop-submit').click();
-  await expect(page.getByTestId('open-loop-toast')).toBeVisible();
-  await page.waitForTimeout(900);
+  await expect(page.getByText(/LLM thinking/i)).toBeVisible();
+  await page.waitForTimeout(850);
+  await expect(page.getByText(/Branch preview is starting/i)).toBeVisible();
+  await page.waitForTimeout(1_200);
+  await expect(page.getByText(/PR #42 is up/i)).toBeVisible();
+  await expect(page.getByText(/image proof/i)).toBeVisible();
+  await expect(page.getByText('improvement WebM', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /approve/i })).toBeVisible();
+  await page.waitForTimeout(1_350);
 
   const video = page.video();
   await page.close();
@@ -154,7 +176,7 @@ test('captures the README demo video', async ({ browser }, testInfo) => {
   expect(statSync(assets.video).size).toBeGreaterThan(50_000);
 });
 
-async function preparePage(page: Page, scene: string, options: { proof?: 'message' | 'pr' } = {}) {
+async function preparePage(page: Page, scene: string, options: { proof?: 'message' | 'pr' | 'sequence' } = {}) {
   await page.addInitScript(fixedDateScript());
   const params = new URLSearchParams({ scene, capture: 'stills' });
   if (options.proof) params.set('proof', options.proof);
@@ -169,11 +191,16 @@ async function openPanelWithText(page: Page, text: string) {
   await page.getByTestId('open-loop-input').fill(text);
 }
 
-async function startTargeting(page: Page, selector: string) {
+async function startTargeting(page: Page, selector: string, options: { cursor?: boolean } = {}) {
   await page.getByRole('button', { name: /point at an element/i }).click();
+  await hoverCaptureTarget(page, selector, options);
+}
+
+async function hoverCaptureTarget(page: Page, selector: string, options: { cursor?: boolean } = {}) {
   const box = await page.locator(selector).boundingBox();
   expect(box).not.toBeNull();
-  await page.mouse.move(box!.x + box!.width * 0.48, box!.y + box!.height * 0.5);
+  await page.mouse.move(box!.x + box!.width * 0.48, box!.y + box!.height * 0.5, { steps: 8 });
+  if (options.cursor) await addCaptureCursor(page, selector);
   await expect(page.locator('.olu-pointer-rect')).toBeVisible();
 }
 
@@ -201,10 +228,8 @@ async function addCaptureCursor(page: Page, selector: string) {
   const box = await page.locator(selector).boundingBox();
   expect(box).not.toBeNull();
   await page.evaluate(({ x, y }) => {
-    document.querySelector('.demo-capture-cursor')?.remove();
-    const cursor = document.createElement('div');
-    cursor.className = 'demo-capture-cursor';
-    cursor.style.cssText = [
+    let cursor = document.querySelector('.demo-capture-cursor');
+    const style = [
       'position: fixed',
       `left: ${x}px`,
       `top: ${y}px`,
@@ -212,15 +237,21 @@ async function addCaptureCursor(page: Page, selector: string) {
       'width: 38px',
       'height: 38px',
       'pointer-events: none',
-      'filter: drop-shadow(0 10px 14px rgb(0 0 0 / 0.28))'
+      'filter: drop-shadow(0 10px 14px rgb(0 0 0 / 0.28))',
+      'transition: left 180ms ease, top 180ms ease'
     ].join(';');
-    cursor.innerHTML = `
-      <svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true">
-        <path d="M8 5.5 31 22.6 20.4 25.1 16 35.5 8 5.5Z" fill="#123522" stroke="#f7fff2" stroke-width="2.8" />
-        <path d="M19.6 24.8 28 34" stroke="#f7fff2" stroke-width="3.2" stroke-linecap="round" />
-      </svg>
-    `;
-    document.body.append(cursor);
+    if (!cursor) {
+      cursor = document.createElement('div');
+      cursor.className = 'demo-capture-cursor';
+      cursor.innerHTML = `
+        <svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true">
+          <path d="M8 5.5 31 22.6 20.4 25.1 16 35.5 8 5.5Z" fill="#123522" stroke="#f7fff2" stroke-width="2.8" />
+          <path d="M19.6 24.8 28 34" stroke="#f7fff2" stroke-width="3.2" stroke-linecap="round" />
+        </svg>
+      `;
+      document.body.append(cursor);
+    }
+    cursor.setAttribute('style', style);
   }, {
     x: box!.x + box!.width * 0.56,
     y: box!.y + box!.height * 0.56
