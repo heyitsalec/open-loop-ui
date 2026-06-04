@@ -1,6 +1,6 @@
 # Adapter Contract
 
-Adapters receive one `OpenLoopAdapterPayload` and return an `OpenLoopAdapterResult`. That is the whole handshake. Open Loop does not need to know whether the next stop is a shell script, a Linear issue, a local model, a PR comment, or your own delightfully specific workflow.
+Adapters receive one `OpenLoopAdapterPayload` and return an `OpenLoopAdapterResult`. That is the whole handshake. Open Loop does not need to know whether the next stop is a shell script, an issue tracker item, a local model, a PR comment, or your own delightfully specific workflow.
 
 ```ts
 export type OpenLoopAdapter = (
@@ -33,4 +33,4 @@ The component is intentionally just the front door:
 - Adapter decides where the work goes.
 - Your system owns auth, provider choice, queueing, permission checks, and writes.
 
-That makes it useful on a toy Vite app, an Electron control panel, a SaaS dashboard, or a personal site without changing the component itself.
+That makes it useful on a toy Vite app, an Electron control panel, a SaaS dashboard, or a portfolio site without changing the component itself.

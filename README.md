@@ -48,7 +48,7 @@ export function App() {
 
 ## The Fun Bit
 
-Open the pill, click a real element, and Open Loop records the label, selector, target rectangle, draft, classification, and app metadata. That payload can become a Linear issue, a local agent task, a design review note, a Codex prompt, a GitHub PR comment, or whatever your team uses to keep work moving.
+Open the pill, click a real element, and Open Loop records the label, selector, target rectangle, draft, classification, and app metadata. That payload can become an issue tracker item, a local agent task, a design review note, a PR comment, or whatever your team uses to keep work moving.
 
 The demo already captures four README-ready Playwright images:
 
@@ -139,5 +139,5 @@ npm run test:e2e
 - [Theming](docs/theming.md)
 - [Accessibility](docs/accessibility.md)
 - [Screenshot playbook](docs/screenshot-playbook.md)
-- [Launch map](docs/launch-map.md)
-- [Star growth playbook](docs/star-growth-playbook.md)
+- [Public release checklist](docs/public-release-checklist.md)
+- [Community growth playbook](docs/community-growth-playbook.md)

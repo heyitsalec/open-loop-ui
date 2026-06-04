@@ -45,4 +45,4 @@ For static demos and tests, use the mock adapter:
 import { createMockAdapter } from '@alecbot/open-loop-ui/adapters/mock';
 ```
 
-The package does not care what happens after submit. Make a Linear issue, call a local model, open a draft PR comment, or just log the payload while you noodle. It is politely nosy, not bossy.
+The package does not care what happens after submit. Make an issue tracker item, call a local model, open a draft PR comment, or just log the payload while you noodle. It is politely nosy, not bossy.
