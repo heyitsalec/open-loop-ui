@@ -1,0 +1,736 @@
+:root {
+  --olu-bg: oklch(98% 0.012 110);
+  --olu-surface: oklch(99% 0.006 100);
+  --olu-surface-2: oklch(95.5% 0.018 115);
+  --olu-ink: oklch(22% 0.035 145);
+  --olu-ink-2: oklch(38% 0.035 145);
+  --olu-ink-3: oklch(53% 0.028 145);
+  --olu-muted: oklch(70% 0.025 130);
+  --olu-accent: oklch(50% 0.11 148);
+  --olu-accent-deep: oklch(32% 0.08 150);
+  --olu-accent-soft: oklch(88% 0.07 142);
+  --olu-blue: oklch(53% 0.11 238);
+  --olu-coral: oklch(61% 0.15 36);
+  --olu-gold: oklch(72% 0.12 86);
+  --olu-border: oklch(84% 0.024 115);
+  --olu-border-strong: oklch(72% 0.042 130);
+  --olu-radius: 18px;
+  --olu-radius-sm: 9px;
+  --olu-shadow: 0 18px 44px oklch(23% 0.045 150 / 0.22), 0 1px 0 oklch(100% 0 0 / 0.72) inset;
+  --olu-font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --olu-mono: "SFMono-Regular", "Cascadia Code", "Roboto Mono", ui-monospace, monospace;
+  --olu-z-pill: 90;
+  --olu-z-backdrop: 92;
+  --olu-z-pointer: 98;
+  --olu-z-panel: 100;
+  --olu-z-toast: 110;
+}
+
+.olu-theme {
+  color: inherit;
+  font-family: var(--olu-font);
+}
+
+.olu-pill,
+.olu-panel,
+.olu-toast,
+.olu-pointer,
+.olu-backdrop {
+  box-sizing: border-box;
+  font-family: var(--olu-font);
+}
+
+.olu-pill *,
+.olu-panel *,
+.olu-toast *,
+.olu-pointer * {
+  box-sizing: border-box;
+}
+
+.olu-pill {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: var(--olu-z-pill);
+  display: grid;
+  grid-template-columns: auto minmax(138px, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  width: min(360px, calc(100vw - 32px));
+  min-height: 54px;
+  padding: 8px 10px 8px 9px;
+  border: 1px solid color-mix(in oklch, var(--olu-accent) 65%, var(--olu-border));
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 14% 22%, oklch(98% 0.035 84 / 0.9), transparent 31%),
+    linear-gradient(180deg, oklch(99% 0.015 145), oklch(91% 0.045 145));
+  color: var(--olu-accent-deep);
+  box-shadow: var(--olu-shadow);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 180ms ease, border-color 160ms ease;
+  animation: olu-pill-breathe 5.5s ease-in-out infinite;
+}
+
+.olu-pill:hover {
+  border-color: var(--olu-accent);
+  box-shadow: 0 22px 52px oklch(23% 0.045 150 / 0.28), 0 0 0 4px oklch(86% 0.045 138 / 0.42), 0 1px 0 oklch(100% 0 0 / 0.8) inset;
+  transform: translateY(-1px);
+}
+
+.olu-pill:focus-visible,
+.olu-icon-button:focus-visible,
+.olu-anchor:focus-visible,
+.olu-panel-foot button:focus-visible {
+  outline: 2px solid var(--olu-accent-soft);
+  outline-offset: 3px;
+}
+
+.olu-pill-icon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--olu-accent-deep);
+  color: var(--olu-bg);
+}
+
+.olu-pill-icon svg {
+  animation: olu-spin 14s linear infinite;
+}
+
+.olu-pill-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.olu-pill strong {
+  overflow: hidden;
+  color: var(--olu-ink);
+  font-size: 12.5px;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.olu-pill small {
+  overflow: hidden;
+  color: var(--olu-ink-3);
+  font-size: 11px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.olu-pill[data-has-draft="true"] small {
+  color: var(--olu-ink-2);
+  font-style: italic;
+}
+
+.olu-pill kbd {
+  padding: 3px 7px;
+  border: 1px solid oklch(100% 0 0 / 0.62);
+  border-radius: 7px;
+  background: oklch(100% 0 0 / 0.72);
+  color: var(--olu-ink-2);
+  font-family: var(--olu-mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.olu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--olu-z-backdrop);
+  border: 0;
+  background: oklch(23% 0.045 150 / 0.2);
+  backdrop-filter: blur(4px);
+  cursor: default;
+  animation: olu-fade 220ms ease;
+}
+
+.olu-backdrop.sent {
+  opacity: 0;
+  transition: opacity 280ms ease;
+}
+
+.olu-panel {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: var(--olu-z-panel);
+  display: flex;
+  width: min(420px, calc(100vw - 40px));
+  max-height: min(720px, calc(100vh - 40px));
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--olu-border-strong);
+  border-radius: var(--olu-radius);
+  background:
+    linear-gradient(180deg, oklch(100% 0.004 110), var(--olu-surface) 42%),
+    var(--olu-surface);
+  color: var(--olu-ink);
+  box-shadow: 0 24px 54px oklch(23% 0.045 150 / 0.3), 0 2px 8px oklch(23% 0.045 150 / 0.12);
+  animation: olu-rise 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.olu-panel.sent {
+  animation: olu-fly 700ms cubic-bezier(0.55, 0.05, 0.2, 1) forwards;
+}
+
+.olu-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 16px 12px;
+}
+
+.olu-panel-head h2 {
+  margin: 0;
+  color: var(--olu-ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.olu-panel-head h2 em {
+  color: var(--olu-accent);
+  font-style: italic;
+}
+
+.olu-panel-head span,
+.olu-preview-label,
+.olu-panel-foot span {
+  color: var(--olu-ink-3);
+  font-family: var(--olu-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.olu-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--olu-ink-3);
+  cursor: pointer;
+}
+
+.olu-icon-button:hover {
+  background: var(--olu-surface-2);
+  color: var(--olu-ink);
+}
+
+.olu-anchor-row {
+  padding: 0 16px 10px;
+}
+
+.olu-anchor {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  min-height: 29px;
+  padding: 5px 11px;
+  border: 1px dashed var(--olu-border-strong);
+  border-radius: 999px;
+  background: var(--olu-surface);
+  color: var(--olu-ink-2);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11.5px;
+}
+
+.olu-anchor:hover,
+.olu-anchor.active {
+  border-style: solid;
+  border-color: var(--olu-accent);
+  background: oklch(94% 0.04 145);
+  color: var(--olu-accent-deep);
+}
+
+.olu-anchor.pinned {
+  cursor: default;
+}
+
+.olu-anchor.pinned span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.olu-anchor.pinned em {
+  color: var(--olu-accent);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 13px;
+}
+
+.olu-anchor.pinned button {
+  display: inline-grid;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--olu-surface-2);
+  color: var(--olu-ink-2);
+  cursor: pointer;
+  font: inherit;
+  line-height: 1;
+}
+
+.olu-textarea {
+  min-height: 88px;
+  margin: 0 16px;
+  padding: 11px 12px;
+  resize: none;
+  border: 1px solid var(--olu-border);
+  border-radius: 11px;
+  outline: none;
+  background: var(--olu-surface-2);
+  color: var(--olu-ink);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.olu-textarea:focus {
+  border-color: var(--olu-accent);
+  background: var(--olu-surface);
+  box-shadow: 0 0 0 3px oklch(86% 0.045 138 / 0.34);
+}
+
+.olu-textarea::placeholder {
+  color: var(--olu-ink-3);
+  font-style: italic;
+}
+
+.olu-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 16px 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--olu-border);
+}
+
+.olu-preview-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--olu-border);
+  border-radius: 11px;
+  background: oklch(99% 0.005 100);
+}
+
+.olu-preview[data-empty="true"] .olu-preview-card {
+  opacity: 0.72;
+}
+
+.olu-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.olu-preview-row.wrap {
+  flex-wrap: wrap;
+}
+
+.olu-preview-card p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0;
+  color: var(--olu-ink);
+  font-size: 12.5px;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.olu-preview-card p span {
+  color: var(--olu-ink-3);
+  font-style: italic;
+}
+
+.olu-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 3px 7px;
+  border: 1px solid var(--olu-border);
+  border-radius: 6px;
+  background: var(--olu-surface);
+  color: var(--olu-ink-2);
+  font-family: var(--olu-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.055em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.olu-chip.src {
+  border-color: transparent;
+  background: var(--olu-accent-deep);
+  color: oklch(95% 0.05 145);
+}
+
+.olu-chip.kind {
+  border-color: transparent;
+  background: oklch(90% 0.06 145);
+  color: var(--olu-accent-deep);
+}
+
+.olu-chip.project {
+  border-color: var(--olu-accent-soft);
+  background: transparent;
+  color: var(--olu-accent);
+}
+
+.olu-chip.route {
+  border-color: oklch(85% 0.06 36);
+  background: oklch(97% 0.025 36);
+  color: oklch(45% 0.13 36);
+}
+
+.olu-chip.anchor {
+  max-width: 100%;
+  overflow: hidden;
+  border-color: oklch(87% 0.03 238);
+  background: oklch(97% 0.018 238);
+  color: var(--olu-blue);
+  text-overflow: ellipsis;
+  text-transform: none;
+}
+
+.olu-dot {
+  width: 8px;
+  height: 8px;
+  margin-left: auto;
+  border-radius: 50%;
+  background: var(--olu-gold);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--olu-gold) 22%, transparent);
+}
+
+.olu-dot.loud {
+  background: var(--olu-coral);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--olu-coral) 22%, transparent);
+}
+
+.olu-dot.quiet {
+  background: var(--olu-blue);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--olu-blue) 20%, transparent);
+}
+
+.olu-arrow {
+  flex: 0 0 auto;
+  color: var(--olu-ink-3);
+}
+
+.olu-panel-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px 14px;
+}
+
+.olu-panel-foot button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 8px 13px;
+  border: 1px solid var(--olu-border);
+  border-radius: 999px;
+  background: var(--olu-surface-2);
+  color: var(--olu-ink-3);
+  cursor: not-allowed;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.olu-panel-foot button.ready {
+  border-color: var(--olu-accent-deep);
+  background: var(--olu-accent);
+  color: var(--olu-bg);
+  cursor: pointer;
+}
+
+.olu-panel-foot button.ready:hover {
+  background: var(--olu-accent-deep);
+}
+
+.olu-progress {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--olu-accent), var(--olu-blue), transparent);
+  background-size: 220% 100%;
+  animation: olu-progress 1.2s linear infinite;
+}
+
+.olu-pointer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--olu-z-pointer);
+  cursor: crosshair;
+  pointer-events: none;
+}
+
+.olu-pointer::before {
+  position: absolute;
+  inset: 0;
+  background: oklch(54% 0.07 145 / 0.07);
+  content: "";
+}
+
+.olu-pointer-hint {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: calc(100vw - 32px);
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--olu-accent-deep);
+  color: oklch(95% 0.05 145);
+  font-family: var(--olu-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.olu-pointer-rect {
+  position: fixed;
+  border: 1.5px solid var(--olu-accent);
+  border-radius: 7px;
+  background: oklch(54% 0.07 145 / 0.08);
+  box-shadow: 0 0 0 4px oklch(54% 0.07 145 / 0.18);
+  pointer-events: none;
+  transition: all 80ms ease-out;
+}
+
+.olu-pointer-rect span {
+  position: absolute;
+  top: -24px;
+  left: 0;
+  max-width: min(280px, 70vw);
+  overflow: hidden;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: var(--olu-accent-deep);
+  color: oklch(95% 0.05 145);
+  font-family: var(--olu-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.olu-toast {
+  position: fixed;
+  right: 20px;
+  bottom: 24px;
+  z-index: var(--olu-z-toast);
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  max-width: min(430px, calc(100vw - 40px));
+  padding: 10px 14px 10px 12px;
+  border: 1px solid color-mix(in oklch, var(--olu-accent) 45%, transparent);
+  border-radius: 13px;
+  background: var(--olu-accent-deep);
+  color: var(--olu-bg);
+  box-shadow: 0 14px 34px oklch(23% 0.045 150 / 0.34);
+  animation: olu-toast-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1), olu-toast-out 320ms ease 4.1s forwards;
+  font-size: 12px;
+}
+
+.olu-toast.failed {
+  border-color: color-mix(in oklch, var(--olu-coral) 58%, transparent);
+  background: oklch(31% 0.09 35);
+}
+
+.olu-toast-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: var(--olu-accent);
+  color: var(--olu-bg);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.olu-toast p {
+  margin: 0;
+}
+
+.olu-toast strong,
+.olu-toast code {
+  color: oklch(94% 0.065 145);
+  font-family: var(--olu-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.olu-toast code {
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: oklch(100% 0 0 / 0.12);
+}
+
+.olu-toast em {
+  color: oklch(92% 0.07 88);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14px;
+}
+
+@keyframes olu-pill-breathe {
+  0%,
+  100% {
+    box-shadow: 0 18px 44px oklch(23% 0.045 150 / 0.22), 0 0 0 0 oklch(86% 0.045 138 / 0), 0 1px 0 oklch(100% 0 0 / 0.72) inset;
+  }
+
+  50% {
+    box-shadow: 0 18px 44px oklch(23% 0.045 150 / 0.22), 0 0 0 5px oklch(86% 0.045 138 / 0.2), 0 1px 0 oklch(100% 0 0 / 0.72) inset;
+  }
+}
+
+@keyframes olu-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes olu-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes olu-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes olu-fly {
+  to {
+    opacity: 0;
+    filter: blur(2px);
+    transform: translate(120px, -340px) scale(0.18) rotate(-6deg);
+  }
+}
+
+@keyframes olu-progress {
+  from {
+    background-position: 220% 0;
+  }
+
+  to {
+    background-position: -220% 0;
+  }
+}
+
+@keyframes olu-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes olu-toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@media (max-width: 560px) {
+  .olu-pill {
+    right: 12px;
+    bottom: 12px;
+    width: calc(100vw - 24px);
+  }
+
+  .olu-panel {
+    right: 12px;
+    bottom: 12px;
+    width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+  }
+
+  .olu-panel-foot {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .olu-panel-foot button {
+    width: 100%;
+  }
+
+  .olu-toast {
+    right: 12px;
+    bottom: 14px;
+    max-width: calc(100vw - 24px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .olu-pill,
+  .olu-pill:hover,
+  .olu-pill-icon svg,
+  .olu-backdrop,
+  .olu-panel,
+  .olu-panel.sent,
+  .olu-progress,
+  .olu-toast {
+    animation: none;
+    transition: none;
+  }
+}

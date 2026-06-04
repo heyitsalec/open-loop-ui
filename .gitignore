@@ -1,0 +1,12 @@
+node_modules
+dist
+demo-dist
+.ladle
+coverage
+playwright-report
+test-results
+.DS_Store
+*.local
+.env
+.env.*
+!.env.example

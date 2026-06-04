@@ -1,0 +1,108 @@
+import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
+
+const scenes = ['dashboard', 'portfolio', 'operator', 'mobile'] as const;
+
+async function pressOpenLoopShortcut(page: Page) {
+  await page.evaluate(() => {
+    window.dispatchEvent(new KeyboardEvent('keydown', {
+      key: '.',
+      ctrlKey: true,
+      bubbles: true,
+      cancelable: true
+    }));
+  });
+}
+
+test('demo scenes render without horizontal overflow', async ({ page }) => {
+  for (const scene of scenes) {
+    await page.goto(`/?scene=${scene}`);
+    await expect(page.getByTestId('demo-scene')).toBeVisible();
+    await expect(page.getByText('Open Loop UI').first()).toBeVisible();
+    const hasNoOverflow = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1);
+    expect(hasNoOverflow, `${scene} should not overflow horizontally`).toBe(true);
+  }
+});
+
+test('element picker highlights the selected scene region', async ({ page }) => {
+  await page.goto('/?scene=operator');
+  await page.getByTestId('open-loop-pill').click();
+  await page.getByTestId('open-loop-input').fill('Tighten the queue map spacing and make the selected node easier to scan.');
+  await page.getByRole('button', { name: /point at an element/i }).click();
+
+  const target = page.locator('.operator-node.n-1');
+  const box = await target.boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.move(box!.x + box!.width * 0.5, box!.y + box!.height * 0.52);
+
+  await expect(page.locator('.olu-pointer-rect')).toBeVisible();
+  await expect(page.locator('.olu-pointer-rect')).toContainText('Review workflow node');
+});
+
+test('submit creates a local item and closes the panel', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile', 'Submit coverage uses the desktop layout; mobile is covered by scene and picker smoke tests.');
+  await page.goto('/?scene=mobile');
+  await page.getByTestId('open-loop-pill').click();
+  await page.getByTestId('open-loop-input').fill('Make the mobile header card feel more tappable.');
+  await page.getByRole('button', { name: /point at an element/i }).click();
+
+  const target = page.locator('[data-open-loop-id="mobile-header-card"]');
+  const box = await target.boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.click(box!.x + box!.width * 0.5, box!.y + box!.height * 0.5);
+
+  await expect(page.getByText(/anchored to/i)).toBeVisible();
+  await page.getByTestId('open-loop-submit').click();
+  await expect(page.getByTestId('open-loop-toast')).toBeVisible();
+  await expect(page.locator('.demo-feed-item')).toBeVisible();
+  await expect(page.getByTestId('open-loop-panel')).toBeHidden();
+});
+
+test('reduced-motion mode keeps the demo usable', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/?scene=dashboard');
+  await page.getByTestId('open-loop-pill').click();
+  await page.getByTestId('open-loop-input').fill('Motion should respect reduced motion preferences.');
+  await expect(page.getByText('motion tweak')).toBeVisible();
+});
+
+test('keyboard flow opens, submits, and restores the floating pill', async ({ page }) => {
+  await page.goto('/?scene=dashboard');
+  await pressOpenLoopShortcut(page);
+
+  await expect(page.getByTestId('open-loop-panel')).toBeVisible();
+  await expect(page.getByTestId('open-loop-input')).toBeFocused();
+  await page.getByTestId('open-loop-input').fill('Fix the broken hover state now');
+  await page.keyboard.down('Control');
+  await page.keyboard.press('Enter');
+  await page.keyboard.up('Control');
+
+  await expect(page.getByTestId('open-loop-toast')).toBeVisible();
+  await expect(page.getByTestId('open-loop-pill')).toBeVisible();
+});
+
+test('targeting selects a labelled DOM region without activating host clicks', async ({ page }) => {
+  await page.goto('/?scene=dashboard');
+  await page.getByTestId('open-loop-pill').click();
+  await page.getByRole('button', { name: /point at an element/i }).click();
+
+  const topbar = page.locator('[data-open-loop-id="demo-topbar"]');
+  const box = await topbar.boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.move(box!.x + 32, box!.y + 28);
+  await page.mouse.click(box!.x + 32, box!.y + 28);
+
+  await expect(page.getByText(/anchored to/i)).toBeVisible();
+  await expect(page.locator('.olu-anchor.pinned em')).toHaveText('Demo top bar');
+});
+
+test('adapter failures surface a failed toast and local feed item', async ({ page }) => {
+  await page.goto('/?scene=dashboard&failAdapter=1');
+  await page.getByTestId('open-loop-pill').click();
+  await page.getByTestId('open-loop-input').fill('Fix the broken submit state now');
+  await page.getByTestId('open-loop-submit').click();
+
+  await expect(page.getByTestId('open-loop-toast')).toBeVisible();
+  await expect(page.getByTestId('open-loop-toast')).toHaveClass(/failed/);
+  await expect(page.locator('.demo-feed-item.failed')).toBeVisible();
+});
