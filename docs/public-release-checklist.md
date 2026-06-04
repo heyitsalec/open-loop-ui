@@ -24,6 +24,7 @@ Slightly warmer version:
 
 - Confirm the README opens with the strongest screenshot or GIF.
 - Confirm the hero, DOM selection, message handoff, PR proof, GIF, and WebM assets were regenerated from Playwright.
+- Run `npm run release:check` locally before publishing or tagging a release.
 - Confirm CI is green for React 18 and React 19.
 - Confirm `npm run test:consumer` installs and builds the packed package in a throwaway app.
 - Confirm `npm pack --dry-run` does not include `docs/assets`.

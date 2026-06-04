@@ -75,6 +75,25 @@ describe('OpenLoopProvider', () => {
     expect(screen.queryByTestId('open-loop-panel')).not.toBeInTheDocument();
   });
 
+  it('keeps Tab and Shift+Tab focus inside the panel', () => {
+    renderLoop();
+    fireEvent.click(screen.getByTestId('open-loop-pill'));
+    fireEvent.change(screen.getByTestId('open-loop-input'), {
+      target: { value: 'Fix the broken hover state now' }
+    });
+
+    const panel = screen.getByTestId('open-loop-panel');
+    const closeButton = screen.getByRole('button', { name: /close design loop/i });
+    const submitButton = screen.getByTestId('open-loop-submit');
+
+    closeButton.focus();
+    fireEvent.keyDown(panel, { key: 'Tab', shiftKey: true });
+    expect(submitButton).toHaveFocus();
+
+    fireEvent.keyDown(panel, { key: 'Tab' });
+    expect(closeButton).toHaveFocus();
+  });
+
   it('does not bubble widget clicks into the host canvas', () => {
     const { onCanvasClick } = renderLoop();
     fireEvent.click(screen.getByTestId('open-loop-pill'));

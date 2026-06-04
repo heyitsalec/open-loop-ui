@@ -13,7 +13,10 @@ The format follows the spirit of Keep a Changelog, and this project uses semanti
 - TypeScript public types for payloads, results, targets, items, and provider props.
 - Docs for getting started, theming, accessibility, screenshots, release prep, and community growth.
 - Playwright-backed demo screenshots.
+- Tight GIF/WebM hero capture showing DOM targeting, LLM-style handoff, and PR proof review.
+- Local `release:check` gate and `prepack` build guard for launch verification.
 
 ### Changed
 
 - Prepared the package for public GitHub, npm, and static demo launch.
+- Strengthened dialog focus containment coverage.

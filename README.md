@@ -156,9 +156,12 @@ npm run typecheck
 npm test
 npm run build
 npm run test:e2e:smoke
+npm run release:check
 ```
 
 `npm run test:e2e:smoke` avoids rewriting tracked screenshots. Use `npm run test:e2e` when you intentionally want the full browser suite, including asset refresh. Use `npm run capture` when you only want to refresh the README screenshots, WebM, and GIF under `docs/assets/`; set `OPEN_LOOP_CAPTURE_GIF=0` to skip GIF conversion.
+
+`npm run release:check` runs the full local launch gate, including demo build, smoke e2e, packed consumer verification, and npm pack dry-run. `npm pack` and `npm publish` also rebuild `dist` through `prepack` so the package does not ship stale output.
 
 Build the static demo with:
 

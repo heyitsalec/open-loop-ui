@@ -20,6 +20,12 @@ npm run test:consumer
 npm run test:e2e:smoke
 ```
 
+Before release or launch-focused PRs, run:
+
+```bash
+npm run release:check
+```
+
 Use `npm run test:e2e` only when you intentionally want to refresh README screenshots.
 
 ## Good First Contributions
