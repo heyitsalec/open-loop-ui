@@ -1,4 +1,4 @@
-import '@alecbot/open-loop-ui/styles.css';
+import '@heyitsalec/open-loop-ui/styles.css';
 import './globals.css';
 import type { ReactNode } from 'react';
 

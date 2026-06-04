@@ -1,5 +1,5 @@
 {
-  "name": "@alecbot/open-loop-ui",
+  "name": "@heyitsalec/open-loop-ui",
   "version": "0.1.0",
   "description": "A drop-in floating design feedback loop for React apps.",
   "author": "Alec Bot <hey@heyitsalec.com>",

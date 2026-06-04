@@ -1,6 +1,6 @@
 # Open Loop UI
 
-[![npm version](https://img.shields.io/npm/v/%40alecbot%2Fopen-loop-ui.svg)](https://www.npmjs.com/package/@alecbot/open-loop-ui)
+[![npm version](https://img.shields.io/npm/v/%40heyitsalec%2Fopen-loop-ui.svg)](https://www.npmjs.com/package/@heyitsalec/open-loop-ui)
 [![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![React 18/19](https://img.shields.io/badge/react-18%20%2F%2019-61dafb.svg)](package.json)
 
@@ -28,14 +28,14 @@ Tiny button, real target, clean handoff.
 ## Install
 
 ```bash
-npm install @alecbot/open-loop-ui
+npm install @heyitsalec/open-loop-ui
 ```
 
 Open Loop UI works with React 18 and 19. Import the provider and the package stylesheet, then wrap the part of the app that should be improvable.
 
 ```tsx
-import { OpenLoopProvider } from '@alecbot/open-loop-ui';
-import '@alecbot/open-loop-ui/styles.css';
+import { OpenLoopProvider } from '@heyitsalec/open-loop-ui';
+import '@heyitsalec/open-loop-ui/styles.css';
 
 export function App() {
   return (
@@ -100,7 +100,7 @@ If no label is present, Open Loop falls back to nearby ids, class names, or tag 
 Adapters receive one `OpenLoopAdapterPayload` and return one `OpenLoopAdapterResult`. That pair is the stable 0.1 contract.
 
 ```ts
-import { createCliAdapter } from '@alecbot/open-loop-ui/adapters/cli';
+import { createCliAdapter } from '@heyitsalec/open-loop-ui/adapters/cli';
 
 export const openLoopAdapter = createCliAdapter({
   command: 'open-loop-agent',

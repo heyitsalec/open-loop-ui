@@ -37,4 +37,4 @@ That makes it useful on a toy Vite app, an Electron control panel, a SaaS dashbo
 
 ## Browser Safety
 
-The root package and mock adapter are browser-safe. `@alecbot/open-loop-ui/adapters/cli` uses `node:child_process`, so import it only from Node-capable code.
+The root package and mock adapter are browser-safe. `@heyitsalec/open-loop-ui/adapters/cli` uses `node:child_process`, so import it only from Node-capable code.

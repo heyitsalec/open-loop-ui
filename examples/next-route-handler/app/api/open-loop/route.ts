@@ -1,4 +1,4 @@
-import type { OpenLoopAdapterPayload, OpenLoopAdapterResult } from '@alecbot/open-loop-ui';
+import type { OpenLoopAdapterPayload, OpenLoopAdapterResult } from '@heyitsalec/open-loop-ui';
 
 export async function POST(request: Request) {
   const payload = await request.json() as OpenLoopAdapterPayload;

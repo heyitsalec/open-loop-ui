@@ -1,5 +1,5 @@
-import { OpenLoopProvider } from '@alecbot/open-loop-ui';
-import { createMockAdapter } from '@alecbot/open-loop-ui/adapters/mock';
+import { OpenLoopProvider } from '@heyitsalec/open-loop-ui';
+import { createMockAdapter } from '@heyitsalec/open-loop-ui/adapters/mock';
 
 export function App() {
   return (
