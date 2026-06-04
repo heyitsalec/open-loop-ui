@@ -1,12 +1,12 @@
 # Open Loop UI
 
-![Open Loop UI screenshot](docs/assets/open-loop-panel.png)
+![Open Loop UI hero screenshot](docs/assets/open-loop-hero.png)
 
 A drop-in floating design feedback loop for React apps. Tiny button, big opinions.
 
 Open Loop UI turns the best part of a design review into a reusable component: point at a real DOM element, describe the improvement, preview how it will route, and hand the request to any local CLI or agent through a small JSON contract.
 
-It is meant to sit inside almost any application: dashboards, mobile shells, internal tools, portfolio sites, weird little agent workbenches, or the admin page nobody admits they use every day. The app keeps being the app. Open Loop just gives it a cheerful little “make this better” button.
+It is meant to sit inside almost any application: dashboards, mobile shells, internal tools, portfolio sites, weird little agent workbenches, or the admin page nobody admits they use every day. The app keeps being the app. Open Loop just gives it a cheerful little "make this better" button.
 
 ```bash
 npm install @alecbot/open-loop-ui
@@ -50,24 +50,31 @@ export function App() {
 
 Open the pill, click a real element, and Open Loop records the label, selector, target rectangle, draft, classification, and app metadata. That payload can become an issue tracker item, a local agent task, a design review note, a PR comment, or whatever your team uses to keep work moving.
 
-The demo already captures four README-ready Playwright images:
+The demo captures README-ready Playwright assets from sanitized app scenes:
 
 - the quiet floating pill
 - the DOM element targeting overlay
 - the live routing panel
 - the adapter handoff after submit
+- a short WebM walkthrough of the same flow
 
-The next obvious flourish is a short recorded video/GIF of the same flow, embedded in the PR conversation when the project goes public. Not required for the MVP. Extremely good demo energy.
+The screenshots and video are generated from real interaction states, not mocked pixels. That is the whole trick: the component can prove its own UX in review.
+
+<video src="docs/assets/open-loop-demo.webm" controls muted playsinline></video>
 
 ## Screenshots
 
-| Floating pill | Element targeting |
+| Hero flow | Floating pill |
 |---|---|
-| ![Floating Improve UI pill](docs/assets/open-loop-pill.png) | ![Open Loop element targeting](docs/assets/open-loop-targeting.png) |
+| ![Open Loop UI hero flow](docs/assets/open-loop-hero.png) | ![Floating Improve UI pill](docs/assets/open-loop-pill.png) |
 
-| Live panel | Adapter handoff |
+| Element targeting | Live panel |
 |---|---|
-| ![Open Loop panel](docs/assets/open-loop-panel.png) | ![Open Loop handoff](docs/assets/open-loop-handoff.png) |
+| ![Open Loop element targeting](docs/assets/open-loop-targeting.png) | ![Open Loop panel](docs/assets/open-loop-panel.png) |
+
+| Adapter handoff |
+|---|---|
+| ![Open Loop handoff](docs/assets/open-loop-handoff.png) |
 
 ## CLI Adapter Contract
 
@@ -128,9 +135,10 @@ npm run typecheck
 npm test
 npm run build
 npm run test:e2e
+npm run capture
 ```
 
-`npm run test:e2e` also refreshes the README screenshots under `docs/assets/`.
+`npm run test:e2e` refreshes the README screenshots and WebM under `docs/assets/`. `npm run capture` runs only the capture spec; set `OPEN_LOOP_CAPTURE_GIF=1` to also write an optional GIF when `ffmpeg` is installed.
 
 ## Docs
 
@@ -139,5 +147,6 @@ npm run test:e2e
 - [Theming](docs/theming.md)
 - [Accessibility](docs/accessibility.md)
 - [Screenshot playbook](docs/screenshot-playbook.md)
+- [Implementation learnings](docs/implementation-learnings.md)
 - [Public release checklist](docs/public-release-checklist.md)
 - [Community growth playbook](docs/community-growth-playbook.md)

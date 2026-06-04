@@ -1,0 +1,222 @@
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, statSync } from 'node:fs';
+import { dirname } from 'node:path';
+import { expect, test } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
+
+const assets = {
+  hero: 'docs/assets/open-loop-hero.png',
+  pill: 'docs/assets/open-loop-pill.png',
+  targeting: 'docs/assets/open-loop-targeting.png',
+  panel: 'docs/assets/open-loop-panel.png',
+  handoff: 'docs/assets/open-loop-handoff.png',
+  video: 'docs/assets/open-loop-demo.webm'
+};
+
+const stillDimensions: Array<[string, { width: number; height: number }]> = [
+  [assets.hero, { width: 1440, height: 960 }],
+  [assets.pill, { width: 1437, height: 896 }],
+  [assets.targeting, { width: 1093, height: 499 }],
+  [assets.panel, { width: 464, height: 474 }],
+  [assets.handoff, { width: 440, height: 320 }]
+];
+
+const STILL_STYLE = `
+  *, *::before, *::after {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+  .olu-backdrop {
+    background: oklch(23% 0.045 150 / 0.14) !important;
+    backdrop-filter: blur(2px) saturate(0.9) !important;
+  }
+  .olu-toast {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+`;
+
+test.describe.configure({ mode: 'serial' });
+
+test('captures composed README screenshot states', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Screenshots are captured once on the desktop project.');
+  for (const path of Object.values(assets)) mkdirSync(dirname(path), { recursive: true });
+
+  await preparePage(page, 'operator');
+  await openPanelWithText(page, 'Make the queue cards easier to scan and soften the hover motion.');
+  await selectTarget(page, '.operator-node.n-1');
+  await expect(page.getByText(/anchored to/i)).toBeVisible();
+  await screenshotUnion(page, [page.locator('.demo-workbench'), page.getByTestId('open-loop-panel')], assets.hero, 18);
+
+  await preparePage(page, 'portfolio');
+  await expect(page.getByTestId('open-loop-pill')).toBeVisible();
+  await screenshotUnion(page, [page.getByTestId('demo-scene'), page.getByTestId('open-loop-pill')], assets.pill, 18);
+
+  await preparePage(page, 'operator');
+  await openPanelWithText(page, 'Tighten the map spacing and make active nodes easier to scan.');
+  await startTargeting(page, '.operator-node.n-2');
+  await expect(page.locator('.olu-pointer-rect')).toContainText('Patch workflow node');
+  await screenshotUnion(page, [page.locator('.olu-pointer-rect'), page.getByTestId('open-loop-panel')], assets.targeting, 26);
+
+  await preparePage(page, 'dashboard');
+  await openPanelWithText(page, 'Tighten the spacing around the chart and make the hover state feel more tactile.');
+  await expect(page.getByText('layout tweak')).toBeVisible();
+  await screenshotUnion(page, [page.getByTestId('open-loop-panel')], assets.panel, 24);
+
+  await preparePage(page, 'mobile');
+  await openPanelWithText(page, 'Make the mobile header card feel more tappable.');
+  await selectTarget(page, '[data-open-loop-id="mobile-header-card"]');
+  await page.getByTestId('open-loop-submit').click();
+  await expect(page.getByTestId('open-loop-toast')).toBeVisible();
+  await expect(page.locator('.demo-feed-item')).toBeVisible();
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await page.addStyleTag({
+    content: '.olu-toast { right: 52px !important; bottom: 118px !important; z-index: 9999 !important; }'
+  });
+  await screenshotClip(page, assets.handoff, { x: 980, y: 620, width: 440, height: 320 });
+
+  for (const [path, expected] of stillDimensions) {
+    expect(existsSync(path), `${path} should exist`).toBe(true);
+    expect(pngDimensions(path), `${path} should have deterministic dimensions`).toEqual(expected);
+    expect(statSync(path).size, `${path} should not be empty`).toBeGreaterThan(8_000);
+  }
+});
+
+test('captures the README demo video', async ({ browser }, testInfo) => {
+  test.setTimeout(60_000);
+  test.skip(testInfo.project.name !== 'chromium', 'Video is captured once on the desktop project.');
+  const tmpDir = 'docs/assets/.video-tmp';
+  rmSync(tmpDir, { recursive: true, force: true });
+  mkdirSync(tmpDir, { recursive: true });
+  mkdirSync(dirname(assets.video), { recursive: true });
+
+  const context = await browser.newContext({
+    baseURL: 'http://127.0.0.1:5173',
+    viewport: { width: 1280, height: 720 },
+    deviceScaleFactor: 1,
+    recordVideo: {
+      dir: tmpDir,
+      size: { width: 1280, height: 720 }
+    }
+  });
+  await context.addInitScript(fixedDateScript());
+  const page = await context.newPage();
+
+  await page.goto('/?scene=dashboard&capture=video');
+  await page.getByTestId('open-loop-pill').click();
+  await page.getByTestId('open-loop-input').fill('Tighten the spacing around the chart and make the hover state feel more tactile.');
+  await page.waitForTimeout(400);
+  await startTargeting(page, '[data-open-loop-id="dashboard-chart"]');
+  await page.waitForTimeout(400);
+  await clickTarget(page, '[data-open-loop-id="dashboard-chart"]');
+  await page.waitForTimeout(350);
+  await page.getByTestId('open-loop-submit').click();
+  await expect(page.getByTestId('open-loop-toast')).toBeVisible();
+  await page.waitForTimeout(900);
+
+  const video = page.video();
+  await page.close();
+  await context.close();
+  const videoPath = await video?.path();
+  expect(videoPath).toBeTruthy();
+  copyFileSync(videoPath!, assets.video);
+  rmSync(tmpDir, { recursive: true, force: true });
+
+  expect(existsSync(assets.video)).toBe(true);
+  expect(statSync(assets.video).size).toBeGreaterThan(50_000);
+});
+
+async function preparePage(page: Page, scene: string) {
+  await page.addInitScript(fixedDateScript());
+  await page.goto(`/?scene=${scene}&capture=stills`);
+  await page.addStyleTag({ content: STILL_STYLE });
+  await expect(page.getByTestId('demo-scene')).toBeVisible();
+}
+
+async function openPanelWithText(page: Page, text: string) {
+  await page.getByTestId('open-loop-pill').click();
+  await expect(page.getByTestId('open-loop-panel')).toBeVisible();
+  await page.getByTestId('open-loop-input').fill(text);
+}
+
+async function startTargeting(page: Page, selector: string) {
+  await page.getByRole('button', { name: /point at an element/i }).click();
+  const box = await page.locator(selector).boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.move(box!.x + box!.width * 0.48, box!.y + box!.height * 0.5);
+  await expect(page.locator('.olu-pointer-rect')).toBeVisible();
+}
+
+async function selectTarget(page: Page, selector: string) {
+  await startTargeting(page, selector);
+  await clickTarget(page, selector);
+}
+
+async function clickTarget(page: Page, selector: string) {
+  const box = await page.locator(selector).boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.click(box!.x + box!.width * 0.48, box!.y + box!.height * 0.5);
+}
+
+async function screenshotUnion(page: Page, locators: Locator[], path: string, padding: number) {
+  const viewport = page.viewportSize();
+  expect(viewport).not.toBeNull();
+  const boxes = (await Promise.all(locators.map((locator) => locator.boundingBox()))).filter((box) => box !== null);
+  expect(boxes.length, `capture boxes for ${path}`).toBeGreaterThan(0);
+
+  const left = Math.max(0, Math.floor(Math.min(...boxes.map((box) => box!.x)) - padding));
+  const top = Math.max(0, Math.floor(Math.min(...boxes.map((box) => box!.y)) - padding));
+  const right = Math.min(viewport!.width, Math.ceil(Math.max(...boxes.map((box) => box!.x + box!.width)) + padding));
+  const bottom = Math.min(viewport!.height, Math.ceil(Math.max(...boxes.map((box) => box!.y + box!.height)) + padding));
+
+  await page.screenshot({
+    path,
+    scale: 'css',
+    clip: {
+      x: left,
+      y: top,
+      width: Math.max(1, right - left),
+      height: Math.max(1, bottom - top)
+    }
+  });
+}
+
+async function screenshotClip(
+  page: Page,
+  path: string,
+  clip: { x: number; y: number; width: number; height: number }
+) {
+  await page.screenshot({
+    path,
+    scale: 'css',
+    clip
+  });
+}
+
+function fixedDateScript() {
+  return `
+    (() => {
+      const fixed = new Date('2026-06-04T12:00:00.000Z').valueOf();
+      const NativeDate = Date;
+      function FixedDate(...args) {
+        return args.length > 0 ? new NativeDate(...args) : new NativeDate(fixed);
+      }
+      FixedDate.now = () => fixed;
+      FixedDate.UTC = NativeDate.UTC;
+      FixedDate.parse = NativeDate.parse;
+      FixedDate.prototype = NativeDate.prototype;
+      window.Date = FixedDate;
+    })();
+  `;
+}
+
+function pngDimensions(path: string) {
+  const buffer = readFileSync(path);
+  return {
+    width: buffer.readUInt32BE(16),
+    height: buffer.readUInt32BE(20)
+  };
+}

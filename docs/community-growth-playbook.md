@@ -5,10 +5,10 @@ This is the low-drama plan for earning attention without pretending the internet
 ## Easy Wins Before Public Launch
 
 - **Pin the visual proof first.** Keep the README screenshot above the fold, then show targeting, panel, and handoff screenshots before the deeper API details.
-- **Add a 20-30 second demo clip.** The stills are already good. A short `open-loop-demo.webm` showing pill -> target -> submit -> JSON handoff will do more than five paragraphs.
+- **Keep the 20-30 second demo clip sharp.** A short `open-loop-demo.webm` showing pill -> target -> submit -> JSON handoff will do more than five paragraphs.
 - **Use sharp GitHub topics.** Start with `react`, `typescript`, `vite`, `ui`, `design-tools`, `developer-tools`, `feedback`, `playwright`, `agent-tools`.
 - **Make the repo description concrete.** Suggested: `A floating design feedback loop for React apps: click a DOM element, describe the fix, hand JSON to your agent or CLI.`
-- **Add a social preview image.** Use `docs/assets/open-loop-panel.png` or a cropped composite of targeting + panel.
+- **Add a social preview image.** Use `docs/assets/open-loop-hero.png` or a cropped composite of targeting + panel.
 - **Ship one "copy-paste in 60 seconds" example.** The README already has the provider snippet; keep it near the top.
 - **Add a tiny examples folder later.** `examples/vite-basic` and `examples/next-route-handler` would make the project feel immediately usable.
 - **Open 3-5 starter issues.** Good first issues make the repo feel alive: Next.js example, demo video, theme preset, adapter examples, docs polish.
@@ -75,6 +75,6 @@ Portfolio caption:
 
 - Do not publish to npm before the repo is public-ready.
 - Do not over-explain agent internals in the README.
-- Do not launch without a short demo clip if you can avoid it.
+- Do not launch without refreshing the short demo clip if you can avoid it.
 - Do not post the same announcement everywhere with identical copy.
 - Do not chase stars at the expense of making the project actually useful.

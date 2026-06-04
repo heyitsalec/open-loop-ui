@@ -40,6 +40,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "capture": "node scripts/capture-assets.mjs",
     "stories": "ladle serve",
     "build:stories": "ladle build"
   },

@@ -1,9 +1,41 @@
-import { Activity, ArrowUpRight, CheckCircle2, GitBranch, Layers3, MonitorDot, MousePointer2, Sparkles } from 'lucide-react';
-import type { CSSProperties, ReactNode } from 'react';
-import { useMemo } from 'react';
+import {
+  Activity,
+  ArrowUpRight,
+  BadgeCheck,
+  BellRing,
+  CheckCircle2,
+  Compass,
+  FileText,
+  GitBranch,
+  Layers3,
+  LayoutDashboard,
+  MonitorDot,
+  MousePointer2,
+  Palette,
+  PanelRight,
+  Phone,
+  RadioTower,
+  Sparkles,
+  Wand2
+} from 'lucide-react';
+import type { CSSProperties, ReactElement, ReactNode } from 'react';
+import { useMemo, useState } from 'react';
 import { useOpenLoop } from '../context';
 
-const bars = [42, 68, 54, 82, 64, 92, 76, 88];
+const sceneIds = ['dashboard', 'portfolio', 'operator', 'mobile'] as const;
+type DemoSceneId = (typeof sceneIds)[number];
+
+type SceneConfig = {
+  id: DemoSceneId;
+  label: string;
+  shortLabel: string;
+  title: string;
+  subtitle: string;
+  hostLabel: string;
+  accent: 'green' | 'blue' | 'coral' | 'gold';
+  component: () => ReactElement;
+};
+
 const routes = [
   { label: 'layout', value: 'design', tone: 'green' },
   { label: 'copy', value: 'copy', tone: 'blue' },
@@ -11,21 +43,77 @@ const routes = [
   { label: 'idea', value: 'planner', tone: 'gold' }
 ];
 
+const scenes: Record<DemoSceneId, SceneConfig> = {
+  dashboard: {
+    id: 'dashboard',
+    label: 'Product dashboard',
+    shortLabel: 'Product',
+    title: 'Feedback lands exactly where the UI work happens.',
+    subtitle: 'A SaaS-style dashboard with labeled regions and JSON handoff.',
+    hostLabel: 'Product dashboard surface',
+    accent: 'green',
+    component: ProductDashboardScene
+  },
+  portfolio: {
+    id: 'portfolio',
+    label: 'Portfolio site',
+    shortLabel: 'Portfolio',
+    title: 'A tiny loop for the pages people actually judge.',
+    subtitle: 'Drop it into a personal site, case study, or polished project page.',
+    hostLabel: 'Portfolio project surface',
+    accent: 'blue',
+    component: PortfolioScene
+  },
+  operator: {
+    id: 'operator',
+    label: 'Operator console',
+    shortLabel: 'Console',
+    title: 'Dense tools get clearer when feedback has an anchor.',
+    subtitle: 'Point at a panel, graph, row, or command and keep the next step precise.',
+    hostLabel: 'Operator console surface',
+    accent: 'coral',
+    component: OperatorScene
+  },
+  mobile: {
+    id: 'mobile',
+    label: 'Mobile shell',
+    shortLabel: 'Mobile',
+    title: 'Mobile-sized flows can still hand off useful context.',
+    subtitle: 'Same provider, same adapter shape, smaller host application.',
+    hostLabel: 'Mobile app preview surface',
+    accent: 'gold',
+    component: MobileScene
+  }
+};
+
 export function DemoApp() {
+  const [sceneId, setSceneId] = useState<DemoSceneId>(() => initialScene());
+  const scene = scenes[sceneId];
+  const captureMode = getCaptureMode();
+  const Scene = scene.component;
+
   return (
-    <main className="demo-shell">
+    <main className={`demo-shell scene-${scene.id}`} data-capture-mode={captureMode} data-demo-scene={scene.id}>
       <section className="demo-workbench" aria-label="Open Loop UI demo workbench">
-        <DemoTopbar />
+        <DemoTopbar scene={scene} onSceneChange={setSceneId} />
         <div className="demo-grid">
-          <ProductCanvas />
-          <AdapterPanel />
+          <section
+            className="demo-host"
+            data-testid="demo-scene"
+            data-open-loop-label={scene.hostLabel}
+            data-open-loop-id={`${scene.id}-host`}
+          >
+            <SceneHero scene={scene} />
+            <Scene />
+          </section>
+          <AdapterPanel scene={scene} />
         </div>
       </section>
     </main>
   );
 }
 
-function DemoTopbar() {
+function DemoTopbar({ scene, onSceneChange }: { scene: SceneConfig; onSceneChange: (scene: DemoSceneId) => void }) {
   return (
     <header className="demo-topbar" data-open-loop-label="Demo top bar" data-open-loop-id="demo-topbar">
       <div className="demo-brand">
@@ -35,10 +123,17 @@ function DemoTopbar() {
           <small>floating design feedback for React apps</small>
         </div>
       </div>
-      <nav className="demo-tabs" aria-label="Demo sections">
-        <button type="button" className="active">Canvas</button>
-        <button type="button">Queue</button>
-        <button type="button">Adapter</button>
+      <nav className="demo-tabs" aria-label="Sanitized demo scenes" data-open-loop-label="Demo scene switcher">
+        {sceneIds.map((id) => (
+          <button
+            key={id}
+            type="button"
+            className={scene.id === id ? 'active' : undefined}
+            onClick={() => onSceneChange(id)}
+          >
+            {scenes[id].shortLabel}
+          </button>
+        ))}
       </nav>
       <div className="demo-top-actions" data-open-loop-label="Demo toolbar actions">
         <span><MonitorDot size={14} /> local</span>
@@ -48,20 +143,25 @@ function DemoTopbar() {
   );
 }
 
-function ProductCanvas() {
+function SceneHero({ scene }: { scene: SceneConfig }) {
   return (
-    <section className="demo-canvas" data-open-loop-label="Product dashboard canvas" data-open-loop-id="product-dashboard-canvas">
-      <div className="demo-canvas-head">
-        <div>
-          <span className="demo-kicker">Demo product surface</span>
-          <h1>Feedback lands exactly where the UI work happens.</h1>
-        </div>
-        <div className="demo-score" data-open-loop-label="Quality score widget">
-          <strong>94</strong>
-          <span>polish score</span>
-        </div>
+    <header className="demo-scene-hero" data-open-loop-label={`${scene.label} headline`}>
+      <div>
+        <span className={`demo-kicker ${scene.accent}`}>{scene.label}</span>
+        <h1>{scene.title}</h1>
+        <p>{scene.subtitle}</p>
       </div>
+      <div className={`demo-score ${scene.accent}`} data-open-loop-label={`${scene.label} proof badge`}>
+        <strong>{scene.id === 'mobile' ? '4x' : scene.id === 'operator' ? '12' : scene.id === 'portfolio' ? '8' : '94'}</strong>
+        <span>{scene.id === 'mobile' ? 'app styles' : scene.id === 'operator' ? 'targets' : scene.id === 'portfolio' ? 'sections' : 'polish score'}</span>
+      </div>
+    </header>
+  );
+}
 
+function ProductDashboardScene() {
+  return (
+    <>
       <div className="demo-metrics" data-open-loop-label="Metric strip">
         <Metric icon={<Activity size={16} />} label="signals" value="128" trend="+18%" />
         <Metric icon={<GitBranch size={16} />} label="handoffs" value="34" trend="+9%" />
@@ -69,48 +169,129 @@ function ProductCanvas() {
       </div>
 
       <div className="demo-canvas-main">
-        <section className="demo-chart" data-open-loop-label="Revenue canvas chart" data-open-loop-node-id="chart.revenue">
-          <div className="demo-section-head">
-            <div>
-              <strong>Revenue canvas</strong>
-              <span>mock dashboard region</span>
-            </div>
-            <ArrowUpRight size={16} />
-          </div>
+        <section className="demo-chart" data-open-loop-label="Revenue canvas chart" data-open-loop-id="dashboard-chart" data-open-loop-node-id="chart.revenue">
+          <SectionHead title="Revenue canvas" meta="mock dashboard region" icon={<ArrowUpRight size={16} />} />
           <div className="demo-bars" aria-label="Demo bar chart">
-            {bars.map((height, index) => (
+            {[42, 68, 54, 82, 64, 92, 76, 88].map((height, index) => (
               <span key={index} style={{ '--bar-height': `${height}%` } as CSSProperties} />
             ))}
           </div>
         </section>
 
         <section className="demo-routes" data-open-loop-label="Routing preview cards">
-          <div className="demo-section-head">
-            <div>
-              <strong>Live route preview</strong>
-              <span>heuristic first, adapter second</span>
-            </div>
-            <Layers3 size={16} />
-          </div>
-          <div className="demo-route-list">
-            {routes.map((route) => (
-              <div className={`demo-route ${route.tone}`} key={route.value}>
-                <span>{route.label}</span>
-                <strong>{route.value}</strong>
-              </div>
-            ))}
-          </div>
+          <SectionHead title="Live route preview" meta="heuristic first, adapter second" icon={<Layers3 size={16} />} />
+          <RouteList />
         </section>
       </div>
 
-      <section className="demo-feedback-lane" data-open-loop-label="Recent local feedback lane">
-        <div>
-          <MousePointer2 size={15} />
-          <span>Try the floating pill, then point at this lane or the chart.</span>
+      <FeedbackLane>Try the floating pill, then point at this lane or the chart.</FeedbackLane>
+    </>
+  );
+}
+
+function PortfolioScene() {
+  return (
+    <div className="portfolio-board">
+      <section className="portfolio-card feature" data-open-loop-label="Featured project case study" data-open-loop-id="portfolio-case-study">
+        <SectionHead title="Signal Studio" meta="case study preview" icon={<Palette size={16} />} />
+        <p>A public project page with a crisp visual hook, short proof points, and enough breathing room for the feedback pill to feel native.</p>
+        <div className="portfolio-proof-row">
+          <span>React package</span>
+          <span>DOM targeting</span>
+          <span>PR proof</span>
         </div>
-        <strong>cmd .</strong>
       </section>
-    </section>
+
+      <section className="portfolio-card timeline" data-open-loop-label="Portfolio launch timeline">
+        <SectionHead title="Launch notes" meta="public story" icon={<FileText size={16} />} />
+        <ol>
+          <li><strong>Show the thing.</strong><span>Screenshot or GIF first.</span></li>
+          <li><strong>Name the trick.</strong><span>Real DOM target to structured handoff.</span></li>
+          <li><strong>Invite reuse.</strong><span>Adapter boundary stays boring.</span></li>
+        </ol>
+      </section>
+
+      <section className="portfolio-card quote" data-open-loop-label="Portfolio testimonial block">
+        <BadgeCheck size={17} />
+        <p>"A comment box is fine. A feedback loop that knows what you clicked is better."</p>
+      </section>
+    </div>
+  );
+}
+
+function OperatorScene() {
+  return (
+    <div className="operator-console">
+      <aside className="operator-rail" data-open-loop-label="Operator command rail">
+        <button type="button" className="active"><LayoutDashboard size={15} /> Overview</button>
+        <button type="button"><RadioTower size={15} /> Signals</button>
+        <button type="button"><PanelRight size={15} /> Queue</button>
+      </aside>
+
+      <section className="operator-map" data-open-loop-label="Operator flow map" data-open-loop-id="operator-flow-map">
+        <SectionHead title="Flow map" meta="dense console region" icon={<Compass size={16} />} />
+        <div className="operator-nodes">
+          {['Intake', 'Review', 'Patch', 'Ship'].map((label, index) => (
+            <div className={`operator-node n-${index}`} key={label} data-open-loop-label={`${label} workflow node`}>
+              <span>{label}</span>
+              <strong>{index === 0 ? '42' : index === 1 ? '18' : index === 2 ? '7' : '3'}</strong>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="operator-queue" data-open-loop-label="Operator queue panel">
+        <SectionHead title="Review queue" meta="selected handoffs" icon={<BellRing size={16} />} />
+        {['Tighten empty state copy', 'Unify toolbar hover', 'Soften chart transition'].map((item, index) => (
+          <article key={item}>
+            <span>Q-{index + 1}</span>
+            <strong>{item}</strong>
+          </article>
+        ))}
+      </section>
+    </div>
+  );
+}
+
+function MobileScene() {
+  return (
+    <div className="mobile-stage">
+      <section className="mobile-device" data-open-loop-label="Mobile app shell" data-open-loop-id="mobile-shell">
+        <div className="mobile-status">
+          <span>9:41</span>
+          <strong>Open Loop</strong>
+          <span>100%</span>
+        </div>
+        <div className="mobile-hero" data-open-loop-label="Mobile header card" data-open-loop-id="mobile-header-card">
+          <Wand2 size={18} />
+          <h2>Daily polish pass</h2>
+          <p>Small screens still deserve specific feedback.</p>
+        </div>
+        <div className="mobile-list">
+          {[
+            ['Home card spacing', 'Layout tweak', 'now'],
+            ['Button label tone', 'Copy pass', 'next'],
+            ['Swipe feedback', 'Motion note', 'later']
+          ].map(([title, kind, time], index) => (
+            <article
+              key={title}
+              data-open-loop-label={index === 0 ? 'Mobile now card' : `${title} row`}
+              data-open-loop-id={index === 0 ? 'mobile-now-card' : undefined}
+            >
+              <span>{time}</span>
+              <div>
+                <strong>{title}</strong>
+                <small>{kind}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="mobile-notes" data-open-loop-label="Mobile implementation notes">
+        <Phone size={18} />
+        <p>Same React provider. Same JSON shape. Different host app personality.</p>
+      </section>
+    </div>
   );
 }
 
@@ -127,7 +308,44 @@ function Metric({ icon, label, value, trend }: { icon: ReactNode; label: string;
   );
 }
 
-function AdapterPanel() {
+function SectionHead({ title, meta, icon }: { title: string; meta: string; icon: ReactNode }) {
+  return (
+    <div className="demo-section-head">
+      <div>
+        <strong>{title}</strong>
+        <span>{meta}</span>
+      </div>
+      {icon}
+    </div>
+  );
+}
+
+function RouteList() {
+  return (
+    <div className="demo-route-list">
+      {routes.map((route) => (
+        <div className={`demo-route ${route.tone}`} key={route.value}>
+          <span>{route.label}</span>
+          <strong>{route.value}</strong>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function FeedbackLane({ children }: { children: ReactNode }) {
+  return (
+    <section className="demo-feedback-lane" data-open-loop-label="Recent local feedback lane">
+      <div>
+        <MousePointer2 size={15} />
+        <span>{children}</span>
+      </div>
+      <strong>cmd .</strong>
+    </section>
+  );
+}
+
+function AdapterPanel({ scene }: { scene: SceneConfig }) {
   const loop = useOpenLoop();
   const payload = loop.previewPayload ?? loop.lastPayload;
   const displayPayload = useMemo(() => {
@@ -140,18 +358,18 @@ function AdapterPanel() {
         },
         target: null,
         classification: loop.classification,
-        app: { id: 'open-loop-demo' }
+        app: { id: 'open-loop-demo', metadata: { scene: scene.id } }
       };
     }
     return payload;
-  }, [loop.classification, payload]);
+  }, [loop.classification, payload, scene.id]);
 
   return (
     <aside className="demo-adapter" data-open-loop-label="Adapter JSON inspector" data-open-loop-id="adapter-json-inspector">
       <div className="demo-section-head">
         <div>
           <strong>Adapter handoff</strong>
-          <span>model-agnostic JSON contract</span>
+          <span>{scene.label} / model-agnostic JSON</span>
         </div>
         <span className="demo-live-dot" />
       </div>
@@ -179,4 +397,14 @@ function AdapterPanel() {
       </div>
     </aside>
   );
+}
+
+function initialScene(): DemoSceneId {
+  const params = new URLSearchParams(window.location.search);
+  const requested = params.get('scene');
+  return sceneIds.includes(requested as DemoSceneId) ? (requested as DemoSceneId) : 'dashboard';
+}
+
+function getCaptureMode() {
+  return new URLSearchParams(window.location.search).get('capture') ?? 'off';
 }

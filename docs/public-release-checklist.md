@@ -23,6 +23,7 @@ Slightly warmer version:
 ## Launch Checklist
 
 - Confirm the README opens with the strongest screenshot or GIF.
+- Confirm `docs/assets/open-loop-hero.png` and `docs/assets/open-loop-demo.webm` were regenerated from Playwright.
 - Add a portfolio project page with the screenshots and one short demo clip.
 - Add a work marketplace portfolio entry with the same screenshot set.
 - Prepare one short post with the "tiny button, real DOM target" hook.
@@ -35,12 +36,13 @@ Slightly warmer version:
 
 Current stills:
 
+- `docs/assets/open-loop-hero.png`
 - `docs/assets/open-loop-pill.png`
 - `docs/assets/open-loop-targeting.png`
 - `docs/assets/open-loop-panel.png`
 - `docs/assets/open-loop-handoff.png`
 
-Future video:
+Video:
 
 - `docs/assets/open-loop-demo.webm`
 
