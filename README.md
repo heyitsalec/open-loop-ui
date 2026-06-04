@@ -4,10 +4,9 @@
 [![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ![Open Loop UI end-to-end demo](docs/assets/open-loop-demo.gif)
+Open Loop drives live ui/ux improvement while you actually use the app.  Make bug fixes, customizations, and features a delightful and frictionless part of your every day app use.  Empower technical and non technical users alike!
 
-A drop-in floating design feedback loop for React apps. Tiny button, big opinions.
-
-Open Loop UI turns the best part of a design review into a reusable component: point at a real DOM element, describe the improvement, preview how it will route, and hand the request to any local CLI or agent through a small JSON contract.
+Open Loop UI turns the best part of a design review into a reusable component: point at a real DOM element, describe the improvement, preview how it will route, and hand the implementation request to any local CLI or agent through a small JSON contract.  It's a Tiny button, big opinions, and can hook into CLIs, agents, local llms.
 
 It is meant to sit inside almost any application: dashboards, mobile shells, internal tools, portfolio sites, weird little agent workbenches, or the admin page nobody admits they use every day. The app keeps being the app. Open Loop just gives it a cheerful little "make this better" button.
 
